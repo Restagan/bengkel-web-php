@@ -1,0 +1,81 @@
+<?php
+/*
+ * Header bersama untuk semua halaman: <head>, navbar, dan strip livery.
+ *
+ * Isi variabel ini SEBELUM memanggil include 'partials/header.php':
+ *   $judul_halaman  (wajib)     teks judul tab browser
+ *   $menu_aktif     (opsional)  dashboard | pelanggan | kendaraan | servis | restorasi
+ *   $tanpa_navbar   (opsional)  true untuk halaman login
+ *   $body_class     (opsional)  class tambahan untuk <body>
+ *
+ * Logo opsional: taruh file gambar di assets/img/logo.png
+ * dan logo akan tampil otomatis di navbar dan halaman login.
+ */
+
+if (!function_exists('kelasStatus')) {
+    // Menentukan warna label status (lihat .st-* di assets/css/tema-gr.css)
+    function kelasStatus($status) {
+        $s = strtolower(trim($status));
+        if ($s === 'selesai')    return 'st-selesai';
+        if ($s === 'dikerjakan') return 'st-dikerjakan';
+        return 'st-menunggu';
+    }
+}
+
+$menu_aktif   = $menu_aktif   ?? '';
+$tanpa_navbar = $tanpa_navbar ?? false;
+$body_class   = $body_class   ?? '';
+$logo_ada     = is_file(__DIR__ . '/../assets/img/logo.png');
+
+$menu = [
+    'dashboard' => ['dashboard.php', 'Dashboard'],
+    'pelanggan' => ['pelanggan.php', 'Pelanggan'],
+    'kendaraan' => ['kendaraan.php', 'Kendaraan'],
+    'servis'    => ['servis.php',    'Servis'],
+    'restorasi' => ['restorasi.php', 'Restorasi'],
+];
+?>
+<!DOCTYPE html>
+<html lang="id" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title><?= htmlspecialchars($judul_halaman); ?> - Bengkel System</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath fill='%23eb0a1e' d='M13 4h13l-7 24H6z'/%3E%3C/svg%3E">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,500;0,600;0,700;1,600;1,700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="assets/css/tema-gr.css" rel="stylesheet">
+</head>
+<body class="gr-body <?= htmlspecialchars($body_class); ?>">
+
+<?php if (!$tanpa_navbar): ?>
+    <nav class="navbar navbar-expand-lg gr-navbar">
+        <div class="container">
+            <a class="navbar-brand gr-brand" href="dashboard.php">
+                <?php if ($logo_ada): ?>
+                    <img src="assets/img/logo.png" alt="" class="gr-logo">
+                <?php endif; ?>
+                <span class="gr-mark" aria-hidden="true"></span>
+                <span>Bengkel System</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menuUtama" aria-controls="menuUtama" aria-expanded="false" aria-label="Buka menu">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="menuUtama">
+                <ul class="navbar-nav me-auto">
+                    <?php foreach ($menu as $kunci => [$url, $label]): ?>
+                        <li class="nav-item">
+                            <a class="nav-link<?= $menu_aktif === $kunci ? ' active' : ''; ?>" href="<?= $url; ?>"<?= $menu_aktif === $kunci ? ' aria-current="page"' : ''; ?>><?= $label; ?></a>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+                <a href="logout.php" class="btn btn-danger btn-sm btn-keluar">Keluar</a>
+            </div>
+        </div>
+    </nav>
+    <div class="gr-stripe" aria-hidden="true"></div>
+<?php endif; ?>
+
+<main class="gr-main">

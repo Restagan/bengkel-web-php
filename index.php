@@ -7,7 +7,7 @@ if (isset($_POST['login'])) {
     $password = $_POST['password'];
 
     $cek = mysqli_query($conn, "SELECT * FROM admin WHERE username='$username' AND password='$password'");
-    
+
     if (mysqli_num_rows($cek) > 0) {
         $_SESSION['admin_bengkel'] = true;
         header("Location: dashboard.php");
@@ -16,41 +16,47 @@ if (isset($_POST['login'])) {
         $error = true;
     }
 }
-?>
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <title>Login - Manajemen Bengkel</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body class="bg-secondary bg-opacity-10 d-flex align-items-center min-vh-100">
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-4">
-                <div class="card shadow-sm border-0">
-                    <div class="card-body p-4">
-                        <h4 class="text-center mb-4">Login Admin Bengkel</h4>
-                        
-                        <?php if(isset($error)) : ?>
-                            <div class="alert alert-danger py-2">Username atau password salah!</div>
-                        <?php endif; ?>
 
-                        <form action="" method="post">
-                            <div class="mb-3">
-                                <label class="form-label fw-medium">Username</label>
-                                <input type="text" name="username" class="form-control" required autocomplete="off">
-                            </div>
-                            <div class="mb-4">
-                                <label class="form-label fw-medium">Password</label>
-                                <input type="password" name="password" class="form-control" required>
-                            </div>
-                            <button type="submit" name="login" class="btn btn-primary w-100 fw-medium">Masuk Sistem</button>
-                        </form>
+$judul_halaman = 'Login';
+$tanpa_navbar  = true;
+$body_class    = 'gr-login';
+include 'partials/header.php';
+?>
+
+<div class="container">
+    <div class="row align-items-center gy-4 gx-lg-5">
+
+        <div class="col-lg-7">
+            <?php if ($logo_ada): ?>
+                <img src="assets/img/logo.png" alt="" class="gr-logo mb-4" style="height:56px">
+            <?php endif; ?>
+            <h1 class="gr-hero-title">Bengkel<br>System</h1>
+            <p class="gr-hero-text">Kelola pelanggan, kendaraan, servis, dan restorasi dari satu panel admin.</p>
+        </div>
+
+        <div class="col-lg-5">
+            <div class="gr-login-card">
+                <h2 class="gr-title mb-4">Masuk admin</h2>
+
+                <?php if(isset($error)) : ?>
+                    <div class="alert alert-danger py-2" role="alert">Username atau password salah. Periksa lagi lalu coba masuk.</div>
+                <?php endif; ?>
+
+                <form action="" method="post">
+                    <div class="mb-3">
+                        <label class="form-label" for="username">Username</label>
+                        <input type="text" id="username" name="username" class="form-control" required autocomplete="off" autofocus>
                     </div>
-                </div>
+                    <div class="mb-4">
+                        <label class="form-label" for="password">Password</label>
+                        <input type="password" id="password" name="password" class="form-control" required>
+                    </div>
+                    <button type="submit" name="login" class="btn btn-primary w-100">Masuk sistem</button>
+                </form>
             </div>
         </div>
+
     </div>
-</body>
-</html>
+</div>
+
+<?php include 'partials/footer.php'; ?>

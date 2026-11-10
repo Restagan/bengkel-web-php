@@ -31,16 +31,35 @@ Pengaturan koneksi database ada di `koneksi.php` (default XAMPP: host `localhost
 
 ```
 bengkel-web/
-├── database.sql    skema database + akun admin
-├── koneksi.php     koneksi MySQL
-├── index.php       halaman login
-├── logout.php      keluar
-├── dashboard.php   ringkasan data
-├── pelanggan.php   modul pelanggan
-├── kendaraan.php   modul kendaraan
-├── servis.php      modul servis
-└── restorasi.php   modul restorasi
+├── database.sql            skema database + akun admin
+├── koneksi.php             koneksi MySQL
+├── index.php               halaman login
+├── logout.php              keluar
+├── dashboard.php           ringkasan data
+├── pelanggan.php           modul pelanggan
+├── kendaraan.php           modul kendaraan
+├── servis.php              modul servis
+├── restorasi.php           modul restorasi
+├── partials/
+│   ├── header.php          <head>, navbar, dan strip aksen (dipakai semua halaman)
+│   └── footer.php          footer dan skrip Bootstrap
+└── assets/
+    ├── css/tema-gr.css     seluruh tema tampilan balap (warna, tombol, tabel, form)
+    └── img/                tempat logo opsional (logo.png)
 ```
+
+## Tema Tampilan
+
+Tampilan bertema balap: hitam, merah, dan putih dengan garis miring ala livery mobil balap.
+Tema ini hanya meniru warna dan gayanya, bukan logo atau merek resmi.
+
+- **Ganti warna:** ubah variabel `--gr-red`, `--gr-asphalt`, dan lainnya di bagian `:root` pada `assets/css/tema-gr.css`.
+- **Ganti kemiringan garis:** ubah `--gr-slant` (default `-22deg`) di file yang sama.
+- **Tambah logo sendiri:** taruh gambar bernama `logo.png` di folder `assets/img/`.
+  Logo akan tampil otomatis di navbar dan halaman login. Tanpa file itu, yang tampil hanya penanda garis miring.
+- **Ubah menu atau judul tab:** edit `partials/header.php`. Cukup satu tempat untuk semua halaman.
+- **Koneksi internet:** font (Google Fonts) dan Bootstrap dimuat dari internet.
+  Tanpa internet, tampilan tetap jalan memakai font bawaan sistem.
 
 ## Catatan Penting: Penghapusan Berantai (CASCADE)
 

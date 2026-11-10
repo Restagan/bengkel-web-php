@@ -1,0 +1,530 @@
+/* =====================================================================
+   TEMA BALAP: hitam, merah, putih
+   Dipakai di atas Bootstrap 5.3 (mode gelap, data-bs-theme="dark").
+
+   Satu ide utama: garis livery miring. Kemiringan --gr-slant dipakai di
+   strip navbar, penanda judul, tombol, label status, dan bar pendapatan.
+   Panel dan tabel sengaja dibuat polos supaya garis miring itu menonjol.
+
+   Ingin ganti warna? Cukup ubah variabel di bagian ":root" di bawah.
+   ===================================================================== */
+
+:root,
+[data-bs-theme="dark"] {
+  --gr-asphalt:   #0a0a0c;   /* latar halaman */
+  --gr-panel:     #141418;   /* panel, kartu, modal */
+  --gr-panel-hi:  #1c1c22;   /* panel yang disorot */
+  --gr-line:      #2a2a31;   /* garis pemisah */
+  --gr-red:       #eb0a1e;   /* merah utama */
+  --gr-red-hot:   #ff4455;   /* merah terang untuk teks kecil dan hover */
+  --gr-red-deep:  #a30614;   /* merah tua */
+  --gr-white:     #f4f4f5;
+  --gr-grey:      #9b9ba5;   /* teks sekunder */
+  --gr-amber:     #ffb200;   /* status Dikerjakan */
+  --gr-green:     #2fd07f;   /* status Selesai */
+
+  --gr-slant: -22deg;        /* kemiringan livery */
+
+  --gr-font-display: "Chakra Petch", "Arial Narrow", "Segoe UI", sans-serif;
+  --gr-font-body:    "Barlow", "Segoe UI", system-ui, -apple-system, sans-serif;
+
+  /* Menimpa variabel bawaan Bootstrap */
+  --bs-body-bg: var(--gr-asphalt);
+  --bs-body-color: var(--gr-white);
+  --bs-body-font-family: var(--gr-font-body);
+  --bs-border-color: var(--gr-line);
+  --bs-secondary-color: var(--gr-grey);
+  --bs-link-color-rgb: 255, 68, 85;
+  --bs-link-hover-color-rgb: 255, 255, 255;
+  --bs-emphasis-color: #fff;
+}
+
+::selection { background: var(--gr-red); color: #fff; }
+
+/* ---------- Dasar halaman ---------- */
+
+body.gr-body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  font-family: var(--gr-font-body);
+  background-color: var(--gr-asphalt);
+  background-image: linear-gradient(180deg, #121216 0, var(--gr-asphalt) 340px);
+  background-repeat: no-repeat;
+}
+.gr-main { flex: 1 0 auto; }
+
+:focus-visible { outline: 2px solid var(--gr-white); outline-offset: 2px; }
+
+/* ---------- Penanda miring (dipakai berulang) ---------- */
+
+.gr-mark,
+.gr-title::before {
+  content: "";
+  display: inline-block;
+  flex: none;
+  width: .7em;
+  height: 1.05em;
+  background: linear-gradient(90deg,
+    var(--gr-red) 0 58%, transparent 58% 74%, var(--gr-white) 74% 100%);
+  transform: skewX(var(--gr-slant));
+}
+
+/* ---------- Navbar dan strip ---------- */
+
+.gr-navbar {
+  background: #050506;
+  padding: .4rem 0;
+  --bs-navbar-toggler-border-color: var(--gr-line);
+}
+.gr-brand {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  font-family: var(--gr-font-display);
+  font-style: italic;
+  font-weight: 700;
+  font-size: 1.3rem;
+  letter-spacing: .02em;
+  text-transform: uppercase;
+  color: #fff;
+}
+.gr-brand:hover, .gr-brand:focus { color: #fff; }
+.gr-logo { height: 34px; width: auto; }
+
+.gr-navbar .navbar-nav .nav-link {
+  position: relative;
+  padding: .55rem 1rem;
+  font-family: var(--gr-font-display);
+  font-weight: 600;
+  font-size: .98rem;
+  color: var(--gr-grey);
+  transition: color .15s;
+}
+.gr-navbar .navbar-nav .nav-link:hover,
+.gr-navbar .navbar-nav .nav-link.active { color: #fff; }
+.gr-navbar .navbar-nav .nav-link.active::after {
+  content: "";
+  position: absolute;
+  left: 1rem; right: 1rem; bottom: 0;
+  height: 3px;
+  background: var(--gr-red);
+  transform: skewX(var(--gr-slant));
+}
+.gr-navbar .btn-keluar { margin: .5rem 0 .75rem; }
+@media (min-width: 992px) { .gr-navbar .btn-keluar { margin: 0; } }
+
+.gr-stripe {
+  height: 8px;
+  background: linear-gradient(112deg,
+    var(--gr-red) 0 56%,
+    transparent 56% 58.5%,
+    var(--gr-white) 58.5% 63%,
+    transparent 63% 65.5%,
+    var(--gr-red-deep) 65.5% 100%);
+}
+
+.gr-footer {
+  margin-top: 2.5rem;
+  padding: 1.1rem 0;
+  border-top: 1px solid var(--gr-line);
+  font-size: .9rem;
+  color: var(--gr-grey);
+}
+
+/* ---------- Judul halaman ---------- */
+
+.gr-title {
+  display: flex;
+  align-items: center;
+  gap: .9rem;
+  margin: 0;
+  font-family: var(--gr-font-display);
+  font-style: italic;
+  font-weight: 700;
+  font-size: clamp(1.7rem, 3vw, 2.3rem);
+  line-height: 1.1;
+  text-transform: uppercase;
+  letter-spacing: .01em;
+}
+.gr-sub { margin: .45rem 0 0; color: var(--gr-grey); }
+.gr-h2 {
+  margin: 0 0 1rem;
+  font-family: var(--gr-font-display);
+  font-weight: 700;
+  font-size: 1.2rem;
+}
+
+/* ---------- Panel ---------- */
+
+.gr-panel {
+  background: var(--gr-panel);
+  border: 1px solid var(--gr-line);
+  border-top: 3px solid var(--gr-red);
+}
+.gr-toolbar {
+  margin-bottom: 1rem;
+  padding: .9rem;
+  background: var(--gr-panel);
+  border: 1px solid var(--gr-line);
+}
+.gr-total {
+  display: inline-flex;
+  flex-direction: column;
+  padding: .45rem 1.4rem .45rem 1rem;
+  line-height: 1.15;
+  background: var(--gr-panel-hi);
+  border-left: 4px solid var(--gr-red);
+}
+.gr-total span { font-size: .85rem; color: var(--gr-grey); }
+.gr-total strong {
+  font-family: var(--gr-font-display);
+  font-weight: 700;
+  font-size: 1.3rem;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- Tabel ---------- */
+
+.table-gr {
+  --bs-table-bg: transparent;
+  --bs-table-color: var(--gr-white);
+  --bs-table-border-color: var(--gr-line);
+  --bs-table-striped-bg: rgba(255, 255, 255, .025);
+  --bs-table-striped-color: var(--gr-white);
+  --bs-table-hover-bg: rgba(235, 10, 30, .09);
+  --bs-table-hover-color: #fff;
+  margin: 0;
+}
+.table-gr thead th {
+  padding: .9rem 1rem;
+  background: #0d0d10;
+  border-bottom: 2px solid var(--gr-line);
+  font-weight: 600;
+  font-size: .9rem;
+  color: var(--gr-grey);
+  white-space: nowrap;
+}
+.table-gr tbody td { padding: .85rem 1rem; vertical-align: middle; }
+.table-gr.table-hover > tbody > tr:hover > td:first-child {
+  box-shadow: inset 3px 0 0 var(--gr-red),
+              inset 0 0 0 9999px var(--bs-table-bg-state, transparent);
+}
+.table-gr .kol-id {
+  font-family: var(--gr-font-display);
+  font-weight: 700;
+  font-size: 1.05rem;
+  letter-spacing: .03em;
+  color: #fff;
+}
+.table-gr .kol-rp {
+  font-family: var(--gr-font-display);
+  font-weight: 600;
+  font-size: 1.05rem;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.table-gr .kol-aksi { white-space: nowrap; }
+.table-gr tbody td.gr-empty {
+  padding: 2.5rem 1rem;
+  text-align: center;
+  color: var(--gr-grey);
+}
+.table-gr tbody td.gr-empty strong { color: var(--gr-white); }
+
+/* ---------- Label status ---------- */
+
+.st {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  padding: .2rem 1.1rem .2rem .95rem;
+  font-family: var(--gr-font-display);
+  font-weight: 600;
+  font-size: .88rem;
+  clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+}
+.st::before {
+  content: "";
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+}
+.st-menunggu   { background: rgba(155, 155, 165, .16); color: #c9c9d1; }
+.st-dikerjakan { background: rgba(255, 178, 0, .16);   color: var(--gr-amber); }
+.st-selesai    { background: rgba(47, 208, 127, .16);  color: var(--gr-green); }
+.st-dikerjakan::before { animation: gr-kedip 1.6s ease-in-out infinite; }
+@keyframes gr-kedip { 50% { opacity: .25; } }
+
+/* ---------- Tombol (jajaran genjang) ---------- */
+
+.btn {
+  --bs-btn-font-family: var(--gr-font-display);
+  --bs-btn-font-weight: 600;
+  --bs-btn-border-width: 0;
+  --bs-btn-border-radius: 0;
+  --bs-btn-padding-x: 1.5rem;
+  --bs-btn-padding-y: .55rem;
+  --gr-cut: 10px;
+  background-image: none;   /* buang gradien bawaan jika ada tema Bootstrap lain */
+  color: var(--bs-btn-color);
+  letter-spacing: .02em;
+  clip-path: polygon(var(--gr-cut) 0, 100% 0,
+                     calc(100% - var(--gr-cut)) 100%, 0 100%);
+  transition: background-color .15s, color .15s;
+}
+.btn-sm {
+  --bs-btn-padding-x: 1.1rem;
+  --bs-btn-padding-y: .3rem;
+  --bs-btn-font-size: .9rem;
+  --gr-cut: 7px;
+}
+/* Garis fokus di luar bentuk akan terpotong, jadi pakai bayangan di dalam */
+.btn:focus-visible {
+  outline: none;
+  box-shadow: inset 0 0 0 2px #fff;
+}
+
+.btn-primary {
+  --bs-btn-color: #fff;
+  --bs-btn-bg: var(--gr-red);
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: var(--gr-red-hot);
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: var(--gr-red-deep);
+}
+.btn-secondary {
+  --bs-btn-color: #e5e5ea;
+  --bs-btn-bg: #2a2a31;
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: #3a3a43;
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: #44444e;
+}
+.btn-info {            /* dipakai untuk "Ubah status" */
+  --bs-btn-color: #fff;
+  --bs-btn-bg: #24242b;
+  --bs-btn-hover-color: #0a0a0c;
+  --bs-btn-hover-bg: #fff;
+  --bs-btn-active-color: #0a0a0c;
+  --bs-btn-active-bg: #d9d9de;
+}
+.btn-danger {          /* dipakai untuk "Hapus" dan "Keluar" */
+  --bs-btn-color: #ff7a85;
+  --bs-btn-bg: #2b0b10;
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: var(--gr-red);
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: var(--gr-red-deep);
+}
+
+/* ---------- Form ---------- */
+
+.form-label {
+  margin-bottom: .35rem;
+  font-weight: 600;
+  font-size: .92rem;
+  color: var(--gr-grey);
+}
+.form-control,
+.form-select {
+  padding: .6rem .85rem;
+  background-color: #0c0c0f;
+  border: 1px solid var(--gr-line);
+  border-radius: 0;
+  color: #fff;
+}
+.form-control::placeholder { color: #666670; }
+.form-control:focus,
+.form-select:focus {
+  background-color: #0c0c0f;
+  border-color: var(--gr-red);
+  box-shadow: 0 0 0 .2rem rgba(235, 10, 30, .22);
+  color: #fff;
+}
+
+.alert-danger {
+  --bs-alert-bg: rgba(235, 10, 30, .12);
+  --bs-alert-color: #ffb3ba;
+  --bs-alert-border-color: rgba(235, 10, 30, .4);
+  border-radius: 0;
+  border-left: 4px solid var(--gr-red);
+}
+
+/* ---------- Modal ---------- */
+
+.modal-content {
+  background: var(--gr-panel);
+  border: 1px solid var(--gr-line);
+  border-top: 3px solid var(--gr-red);
+  border-radius: 0;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, .7);
+}
+.modal-header, .modal-footer { border-color: var(--gr-line); }
+.modal-title {
+  font-family: var(--gr-font-display);
+  font-style: italic;
+  font-weight: 700;
+  font-size: 1.25rem;
+}
+.modal-backdrop { --bs-backdrop-opacity: .75; }
+
+/* ---------- Dashboard ---------- */
+
+.gr-tile {
+  height: 100%;
+  padding: 1.25rem 1.4rem 1.35rem;
+  background: var(--gr-panel);
+  border: 1px solid var(--gr-line);
+  border-left: 4px solid var(--gr-red);
+}
+.gr-tile-label { font-size: .95rem; color: var(--gr-grey); }
+.gr-tile-value {
+  margin-top: .2rem;
+  font-family: var(--gr-font-display);
+  font-style: italic;
+  font-weight: 700;
+  font-size: clamp(2rem, 4.2vw, 3rem);
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+.gr-tile-value small {
+  margin: 0 .35rem;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 1.05rem;
+  color: var(--gr-grey);
+}
+/* Kartu pendapatan: satu-satunya blok merah penuh, dengan sisi kanan miring */
+.gr-tile-hot {
+  padding-right: 3rem;
+  background: var(--gr-red);
+  border-color: var(--gr-red);
+  border-left-color: #fff;
+  clip-path: polygon(0 0, 100% 0, calc(100% - 26px) 100%, 0 100%);
+}
+.gr-tile-hot .gr-tile-label { color: rgba(255, 255, 255, .88); }
+.gr-tile-hot .gr-tile-value small { color: rgba(255, 255, 255, .85); }
+
+.gr-sector {
+  display: flex;
+  gap: 5px;
+  height: 22px;
+  background: #0c0c0f;
+  border: 1px solid var(--gr-line);
+}
+.gr-sector .seg { height: 100%; }
+.gr-sector .seg-a {
+  background: var(--gr-red);
+  clip-path: polygon(0 0, 100% 0, calc(100% - 14px) 100%, 0 100%);
+}
+.gr-sector .seg-b {
+  background: var(--gr-white);
+  clip-path: polygon(14px 0, 100% 0, 100% 100%, 0 100%);
+}
+.gr-legend { display: flex; align-items: flex-start; gap: .75rem; }
+.gr-legend .sw {
+  flex: none;
+  width: 14px; height: 30px;
+  margin-top: 2px;
+  transform: skewX(var(--gr-slant));
+}
+.gr-legend .sw-a { background: var(--gr-red); }
+.gr-legend .sw-b { background: var(--gr-white); }
+.gr-legend-name { font-size: .95rem; color: var(--gr-grey); }
+.gr-legend-val {
+  font-family: var(--gr-font-display);
+  font-weight: 700;
+  font-size: 1.3rem;
+  font-variant-numeric: tabular-nums;
+}
+.gr-legend-val small {
+  margin-left: .4rem;
+  font-weight: 500;
+  font-size: .95rem;
+  color: var(--gr-grey);
+}
+
+.gr-link-card {
+  display: block;
+  height: 100%;
+  padding: 1rem 1.2rem;
+  background: var(--gr-panel);
+  border: 1px solid var(--gr-line);
+  border-left: 4px solid var(--gr-line);
+  color: #fff;
+  text-decoration: none;
+  transition: border-color .15s, background-color .15s;
+}
+.gr-link-card:hover,
+.gr-link-card:focus-visible {
+  background: var(--gr-panel-hi);
+  border-left-color: var(--gr-red);
+  color: #fff;
+}
+.gr-link-card strong {
+  display: block;
+  font-family: var(--gr-font-display);
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+.gr-link-card span { font-size: .9rem; color: var(--gr-grey); }
+
+/* ---------- Halaman login ---------- */
+
+/* Garis livery yang melintang di belakang halaman: satu-satunya
+   elemen besar yang berani di seluruh situs. */
+body.gr-login::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(112deg,
+      transparent 0 57%,
+      rgba(235, 10, 30, .9) 57% 60.5%,
+      transparent 60.5% 62%,
+      rgba(244, 244, 245, .85) 62% 63.4%,
+      transparent 63.4% 65%,
+      rgba(163, 6, 20, .9) 65% 67%,
+      transparent 67%);
+}
+@media (max-width: 991.98px) {
+  /* Di layar kecil garis melewati teks, jadi diredupkan agar teks tetap terbaca */
+  body.gr-login::before { opacity: .38; }
+}
+.gr-login .gr-main {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  padding: 2.5rem 0;
+}
+.gr-hero-title {
+  margin: 0;
+  font-family: var(--gr-font-display);
+  font-style: italic;
+  font-weight: 700;
+  font-size: clamp(2.8rem, 8vw, 5.6rem);
+  line-height: .98;
+  text-transform: uppercase;
+}
+.gr-hero-text { max-width: 30ch; margin-top: 1.2rem; font-size: 1.1rem; color: var(--gr-grey); }
+.gr-login-card {
+  padding: 2rem 1.75rem;
+  background: var(--gr-panel);
+  border: 1px solid var(--gr-line);
+  border-top: 3px solid var(--gr-red);
+  box-shadow: 0 30px 70px -20px rgba(0, 0, 0, .85);
+}
+
+/* ---------- Hormati pengaturan "kurangi gerakan" ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}

@@ -42,9 +42,9 @@ if (isset($_GET['hapus'])) {
 $keyword = $_GET['cari'] ?? '';
 $sort    = $_GET['sort'] ?? 'ASC';
 
-$query = "SELECT servis.*, kendaraan.merk, kendaraan.nopol 
-          FROM servis 
-          JOIN kendaraan ON servis.id_kendaraan = kendaraan.id 
+$query = "SELECT servis.*, kendaraan.merk, kendaraan.nopol
+          FROM servis
+          JOIN kendaraan ON servis.id_kendaraan = kendaraan.id
           WHERE servis.id LIKE '%$keyword%' OR kendaraan.nopol LIKE '%$keyword%'
           ORDER BY servis.biaya $sort";
 $result = mysqli_query($conn, $query);
@@ -53,179 +53,170 @@ $total_query = mysqli_query($conn, "SELECT SUM(biaya) as total_pendapatan FROM s
 $total_pendapatan = mysqli_fetch_assoc($total_query)['total_pendapatan'] ?? 0;
 
 $data_kendaraan = mysqli_query($conn, "SELECT id, merk, nopol FROM kendaraan ORDER BY nopol ASC");
+
+$judul_halaman = 'Data Servis';
+$menu_aktif    = 'servis';
+include 'partials/header.php';
 ?>
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <title>Data Servis - Bengkel</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body class="bg-light">
 
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
-        <div class="container">
-            <a class="navbar-brand fw-bold" href="dashboard.php">BENGKEL SYSTEM</a>
-            <div class="collapse navbar-collapse">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item"><a class="nav-link" href="dashboard.php">Dashboard</a></li>
-                    <li class="nav-item"><a class="nav-link" href="pelanggan.php">Data Pelanggan</a></li>
-                    <li class="nav-item"><a class="nav-link" href="kendaraan.php">Data Kendaraan</a></li>
-                    <li class="nav-item"><a class="nav-link active" href="servis.php">Data Servis</a></li>
-                    <li class="nav-item"><a class="nav-link" href="restorasi.php">Data Restorasi</a></li>
-                </ul>
-                <a href="logout.php" class="btn btn-outline-danger btn-sm">Keluar</a>
+<div class="container py-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+        <h1 class="gr-title">Data servis</h1>
+        <div class="d-flex flex-wrap align-items-center gap-3">
+            <div class="gr-total">
+                <span>Total pendapatan servis</span>
+                <strong>Rp <?= number_format($total_pendapatan, 0, ',', '.'); ?></strong>
             </div>
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalTambah">Tambah servis</button>
         </div>
-    </nav>
+    </div>
 
-    <div class="container">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h3>Data Servis</h3>
-            <div>
-                <span class="badge bg-success fs-6 me-2">Total Pendapatan: Rp <?= number_format($total_pendapatan, 0, ',', '.'); ?></span>
-                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalTambah">+ Tambah Servis</button>
+    <?php if(isset($error)): ?>
+        <div class="alert alert-danger py-2" role="alert"><?= $error; ?></div>
+    <?php endif; ?>
+
+    <form method="get" class="gr-toolbar">
+        <div class="row g-2">
+            <div class="col-md-5">
+                <input type="text" name="cari" class="form-control" placeholder="Cari ID servis atau nopol..." aria-label="Cari servis" value="<?= htmlspecialchars($keyword); ?>">
             </div>
-        </div>
-
-        <?php if(isset($error)): ?>
-            <div class="alert alert-danger py-2"><?= $error; ?></div>
-        <?php endif; ?>
-
-        <form method="get" class="row g-2 mb-3">
             <div class="col-md-4">
-                <input type="text" name="cari" class="form-control" placeholder="Cari ID Servis atau Nopol..." value="<?= htmlspecialchars($keyword); ?>">
-            </div>
-            <div class="col-md-3">
-                <select name="sort" class="form-select">
-                    <option value="ASC" <?= $sort == 'ASC' ? 'selected' : ''; ?>>Biaya: Termurah ke Termahal</option>
-                    <option value="DESC" <?= $sort == 'DESC' ? 'selected' : ''; ?>>Biaya: Termahal ke Termurah</option>
+                <select name="sort" class="form-select" aria-label="Urutan biaya">
+                    <option value="ASC" <?= $sort == 'ASC' ? 'selected' : ''; ?>>Biaya: termurah ke termahal</option>
+                    <option value="DESC" <?= $sort == 'DESC' ? 'selected' : ''; ?>>Biaya: termahal ke termurah</option>
                 </select>
             </div>
-            <div class="col-md-2">
+            <div class="col-md-3">
                 <button type="submit" class="btn btn-secondary w-100">Filter</button>
             </div>
-        </form>
+        </div>
+    </form>
 
-        <div class="card shadow-sm border-0 mb-5">
-            <div class="card-body p-0">
-                <table class="table table-hover table-striped mb-0">
-                    <thead class="table-dark">
-                        <tr>
-                            <th>ID Servis</th>
-                            <th>Kendaraan (Nopol)</th>
-                            <th>Keluhan</th>
-                            <th>Biaya</th>
-                            <th>Status</th>
-                            <th>Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php if (mysqli_num_rows($result) > 0): ?>
-                            <?php while ($row = mysqli_fetch_assoc($result)): ?>
-                                <tr>
-                                    <td><strong><?= $row['id']; ?></strong></td>
-                                    <td><?= $row['merk']; ?> <br><small class="text-muted"><?= $row['nopol']; ?></small></td>
-                                    <td><?= $row['keluhan']; ?></td>
-                                    <td>Rp <?= number_format($row['biaya'], 0, ',', '.'); ?></td>
-                                    <td>
-                                        <span class="badge <?= $row['status'] == 'Selesai' ? 'bg-success' : 'bg-warning text-dark'; ?>">
-                                            <?= $row['status']; ?>
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <button class="btn btn-info btn-sm text-white" data-bs-toggle="modal" data-bs-target="#modalStatus<?= $row['id']; ?>">Ubah Status</button>
-                                        <a href="servis.php?hapus=<?= $row['id']; ?>" class="btn btn-danger btn-sm" onclick="return confirm('Hapus data servis ini?')">Hapus</a>
-                                    </td>
-                                </tr>
-
-                                <div class="modal fade" id="modalStatus<?= $row['id']; ?>" tabindex="-1">
-                                    <div class="modal-dialog modal-sm">
-                                        <div class="modal-content">
-                                            <form action="" method="post">
-                                                <div class="modal-header bg-info text-white">
-                                                    <h6 class="modal-title">Ubah Status Servis</h6>
-                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <input type="hidden" name="id_servis" value="<?= $row['id']; ?>">
-                                                    <div class="mb-3">
-                                                        <label class="form-label">Status Baru:</label>
-                                                        <select name="status_baru" class="form-select">
-                                                            <option value="Menunggu" <?= $row['status'] == 'Menunggu' ? 'selected' : ''; ?>>Menunggu</option>
-                                                            <option value="Dikerjakan" <?= $row['status'] == 'Dikerjakan' ? 'selected' : ''; ?>>Dikerjakan</option>
-                                                            <option value="Selesai" <?= $row['status'] == 'Selesai' ? 'selected' : ''; ?>>Selesai</option>
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="submit" name="ubah_status" class="btn btn-primary btn-sm w-100">Simpan Status</button>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-
-                            <?php endwhile; ?>
-                        <?php else: ?>
+    <div class="gr-panel">
+        <div class="table-responsive">
+            <table class="table table-gr table-striped table-hover align-middle">
+                <thead>
+                    <tr>
+                        <th>ID servis</th>
+                        <th>Kendaraan (nopol)</th>
+                        <th>Keluhan</th>
+                        <th>Biaya</th>
+                        <th>Status</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if (mysqli_num_rows($result) > 0): ?>
+                        <?php while ($row = mysqli_fetch_assoc($result)): ?>
                             <tr>
-                                <td colspan="6" class="text-center text-muted py-3">Belum ada data servis.</td>
+                                <td class="kol-id"><?= $row['id']; ?></td>
+                                <td><?= $row['merk']; ?> <br><small class="text-secondary"><?= $row['nopol']; ?></small></td>
+                                <td><?= $row['keluhan']; ?></td>
+                                <td class="kol-rp">Rp <?= number_format($row['biaya'], 0, ',', '.'); ?></td>
+                                <td><span class="st <?= kelasStatus($row['status']); ?>"><?= $row['status']; ?></span></td>
+                                <td class="kol-aksi">
+                                    <button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#modalStatus<?= $row['id']; ?>">Ubah status</button>
+                                    <a href="servis.php?hapus=<?= $row['id']; ?>" class="btn btn-danger btn-sm" onclick="return confirm('Hapus data servis ini?')">Hapus</a>
+                                </td>
                             </tr>
-                        <?php endif; ?>
-                    </tbody>
-                </table>
-            </div>
+                        <?php endwhile; ?>
+                    <?php else: ?>
+                        <tr>
+                            <td colspan="6" class="gr-empty">
+                                <?php if ($keyword !== ''): ?>
+                                    Tidak ada servis yang cocok dengan "<?= htmlspecialchars($keyword); ?>". Coba ID servis atau nopol lain.
+                                <?php else: ?>
+                                    Belum ada data servis. Klik <strong>Tambah servis</strong> untuk mencatat yang pertama.
+                                <?php endif; ?>
+                            </td>
+                        </tr>
+                    <?php endif; ?>
+                </tbody>
+            </table>
         </div>
     </div>
+</div>
 
-    <div class="modal fade" id="modalTambah" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <form action="" method="post">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Tambah Data Servis</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label class="form-label">ID Servis</label>
-                            <input type="text" name="id" class="form-control" required placeholder="Contoh: S001">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Pilih Kendaraan</label>
-                            <select name="id_kendaraan" class="form-select" required>
-                                <option value="" disabled selected>-- Pilih Kendaraan --</option>
-                                <?php while($k = mysqli_fetch_assoc($data_kendaraan)): ?>
-                                    <option value="<?= $k['id']; ?>"><?= $k['nopol']; ?> - <?= $k['merk']; ?></option>
-                                <?php endwhile; ?>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Keluhan</label>
-                            <textarea name="keluhan" class="form-control" rows="2" required placeholder="Contoh: Ganti oli dan rem blong"></textarea>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Biaya (Rp)</label>
-                            <input type="number" name="biaya" class="form-control" required placeholder="Contoh: 150000">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Status Awal</label>
-                            <select name="status" class="form-select" required>
-                                <option value="Menunggu">Menunggu</option>
-                                <option value="Dikerjakan">Dikerjakan</option>
-                                <option value="Selesai">Selesai</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                        <button type="submit" name="tambah" class="btn btn-primary">Simpan</button>
-                    </div>
-                </form>
-            </div>
+<?php
+if (mysqli_num_rows($result) > 0):
+    mysqli_data_seek($result, 0);
+    while ($row = mysqli_fetch_assoc($result)):
+?>
+<div class="modal fade" id="modalStatus<?= $row['id']; ?>" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <form action="" method="post">
+                <div class="modal-header">
+                    <h6 class="modal-title">Ubah status <?= $row['id']; ?></h6>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="id_servis" value="<?= $row['id']; ?>">
+                    <label class="form-label">Status baru</label>
+                    <select name="status_baru" class="form-select">
+                        <option value="Menunggu" <?= $row['status'] == 'Menunggu' ? 'selected' : ''; ?>>Menunggu</option>
+                        <option value="Dikerjakan" <?= $row['status'] == 'Dikerjakan' ? 'selected' : ''; ?>>Dikerjakan</option>
+                        <option value="Selesai" <?= $row['status'] == 'Selesai' ? 'selected' : ''; ?>>Selesai</option>
+                    </select>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" name="ubah_status" class="btn btn-primary btn-sm w-100">Simpan status</button>
+                </div>
+            </form>
         </div>
     </div>
+</div>
+<?php
+    endwhile;
+endif;
+?>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+<div class="modal fade" id="modalTambah" tabindex="-1" aria-labelledby="judulModalTambah" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form action="" method="post">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="judulModalTambah">Tambah data servis</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">ID servis</label>
+                        <input type="text" name="id" class="form-control" required placeholder="Contoh: S001">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Pilih kendaraan</label>
+                        <select name="id_kendaraan" class="form-select" required>
+                            <option value="" disabled selected>-- Pilih kendaraan --</option>
+                            <?php while($k = mysqli_fetch_assoc($data_kendaraan)): ?>
+                                <option value="<?= $k['id']; ?>"><?= $k['nopol']; ?> - <?= $k['merk']; ?></option>
+                            <?php endwhile; ?>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Keluhan</label>
+                        <textarea name="keluhan" class="form-control" rows="2" required placeholder="Contoh: Ganti oli dan rem blong"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Biaya (Rp)</label>
+                        <input type="number" name="biaya" class="form-control" required placeholder="Contoh: 150000">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Status awal</label>
+                        <select name="status" class="form-select" required>
+                            <option value="Menunggu">Menunggu</option>
+                            <option value="Dikerjakan">Dikerjakan</option>
+                            <option value="Selesai">Selesai</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" name="tambah" class="btn btn-primary">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<?php include 'partials/footer.php'; ?>
