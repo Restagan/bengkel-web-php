@@ -25,6 +25,8 @@ ALTER TABLE servis
     ADD COLUMN status_bayar VARCHAR(20) NOT NULL DEFAULT 'Belum Lunas',
     ADD COLUMN tanggal_masuk DATE NULL,
     ADD COLUMN tanggal_selesai DATE NULL,
+    ADD COLUMN kode_resi VARCHAR(20) NULL,
+    ADD UNIQUE KEY uq_servis_kode_resi (kode_resi),
     ADD CONSTRAINT fk_servis_mekanik FOREIGN KEY (id_mekanik) REFERENCES mekanik(id) ON DELETE SET NULL ON UPDATE CASCADE;
 
 UPDATE servis SET biaya_jasa = biaya, tanggal_masuk = CURDATE();

@@ -10,5 +10,6 @@ if (!$conn) {
     die("Koneksi ke database gagal: " . mysqli_connect_error());
 }
 
+// Fungsi bantu bersama (ID otomatis, format rupiah, pesan, dll)
 require_once __DIR__ . '/fungsi.php';
 ?>

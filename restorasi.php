@@ -110,6 +110,7 @@ $result = mysqli_query($conn, "SELECT restorasi.*, kendaraan.merk, kendaraan.nop
 $ringkas = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COALESCE(SUM(biaya), 0) AS total,
     COALESCE(SUM(CASE WHEN status_bayar <> 'Lunas' THEN biaya ELSE 0 END), 0) AS belum FROM restorasi"));
 
+// Pilihan untuk form
 $daftar_kendaraan = [];
 $hasil = mysqli_query($conn, "SELECT kendaraan.id, kendaraan.merk, kendaraan.nopol, pelanggan.nama AS pemilik
     FROM kendaraan JOIN pelanggan ON kendaraan.id_pelanggan = pelanggan.id ORDER BY kendaraan.nopol ASC");
@@ -332,6 +333,7 @@ include 'partials/header.php';
     </div>
 </div>
 
+<!-- Modal edit (diisi otomatis oleh assets/js/app.js dari atribut data-* tombol Edit) -->
 <div class="modal fade" id="modalEdit" tabindex="-1" aria-labelledby="judulModalEdit" aria-hidden="true" data-isi-form>
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -405,6 +407,7 @@ include 'partials/header.php';
     </div>
 </div>
 
+<!-- Modal ubah status cepat -->
 <div class="modal fade" id="modalStatus" tabindex="-1" aria-labelledby="judulModalStatus" aria-hidden="true" data-isi-form>
     <div class="modal-dialog modal-sm">
         <div class="modal-content">

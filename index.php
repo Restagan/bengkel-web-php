@@ -54,6 +54,7 @@ include 'partials/header.php';
                     <button type="submit" name="login" class="btn btn-primary w-100">Masuk sistem</button>
                 </form>
             </div>
+            <p class="gr-lacak-publik">Pelanggan? <a href="lacak.php">Lacak progres servis kendaraan Anda</a></p>
         </div>
 
     </div>

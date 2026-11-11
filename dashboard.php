@@ -6,6 +6,7 @@ if (!isset($_SESSION['admin_bengkel'])) {
     pindah('index.php');
 }
 
+// Satu angka dari satu query (mis. COUNT atau SUM)
 function satuAngka($conn, $sql) {
     $baris = mysqli_fetch_row(mysqli_query($conn, $sql));
     return $baris[0] ?? 0;
@@ -18,6 +19,7 @@ $pendapatan_servis    = satuAngka($conn, "SELECT COALESCE(SUM(biaya), 0) FROM se
 $pendapatan_restorasi = satuAngka($conn, "SELECT COALESCE(SUM(biaya), 0) FROM restorasi");
 $total_pendapatan     = $pendapatan_servis + $pendapatan_restorasi;
 
+// Persentase untuk bar rincian pendapatan (hindari pembagian dengan nol)
 $persen_servis    = $total_pendapatan > 0 ? round($pendapatan_servis / $total_pendapatan * 100) : 0;
 $persen_restorasi = $total_pendapatan > 0 ? 100 - $persen_servis : 0;
 
@@ -27,6 +29,7 @@ $jml_berjalan  = satuAngka($conn, "SELECT COUNT(*) FROM servis WHERE status <> '
                + satuAngka($conn, "SELECT COUNT(*) FROM restorasi WHERE status <> 'Selesai'");
 $jml_menipis   = satuAngka($conn, "SELECT COUNT(*) FROM sparepart WHERE stok <= stok_minimum");
 
+// ---------- Pendapatan 6 bulan terakhir (berdasarkan tanggal masuk) ----------
 $bulan_ini = date('Y-m');
 $enam      = [];
 for ($i = 5; $i >= 0; $i--) {
@@ -45,8 +48,9 @@ while ($r = mysqli_fetch_assoc($hasil)) {
     if (isset($enam[$r['bulan']])) { $enam[$r['bulan']] = (float)$r['total']; }
 }
 $maks_bulan = max($enam);
-$maks_px    = 150;
+$maks_px    = 150; // tinggi batang tertinggi (piksel)
 
+// ---------- Pekerjaan yang belum selesai (yang paling lama menunggu di atas) ----------
 $berjalan = mysqli_query($conn, "SELECT kerja.*, kendaraan.merk, kendaraan.nopol, mekanik.nama AS nama_mekanik
     FROM (
         SELECT 'Servis' AS jenis, id, id_kendaraan, id_mekanik, keluhan AS uraian, status, tanggal_masuk FROM servis WHERE status <> 'Selesai'

@@ -25,6 +25,7 @@ if (!$servis) {
     pindah('servis.php');
 }
 
+// ---------- Tambah suku cadang (stok langsung berkurang) ----------
 if (isset($_POST['tambah_item'])) {
     $id_sparepart = dariPost($conn, 'id_sparepart', 50);
     $jumlah       = bilangan($_POST['jumlah'] ?? '', 9999);
@@ -94,6 +95,9 @@ include 'partials/header.php';
             <h1 class="gr-title mt-1">Servis <?= h($servis['id']); ?></h1>
         </div>
         <div class="d-flex flex-wrap gap-2">
+            <?php if ($servis['kode_resi']): ?>
+                <a href="lacak.php?q=<?= urlencode($servis['kode_resi']); ?>" target="_blank" rel="noopener" class="btn btn-secondary">Lihat halaman lacak</a>
+            <?php endif; ?>
             <a href="nota.php?jenis=servis&amp;id=<?= urlencode($servis['id']); ?>" target="_blank" rel="noopener" class="btn btn-primary">Cetak nota</a>
         </div>
     </div>
@@ -105,6 +109,15 @@ include 'partials/header.php';
             <div class="gr-panel gr-panel-pad h-100">
                 <h2 class="gr-h2">Informasi servis</h2>
                 <dl class="gr-dl">
+                    <dt>Kode resi</dt>
+                    <dd>
+                        <?php if ($servis['kode_resi']): ?>
+                            <span class="lacak-kode lacak-kode-kecil"><?= h($servis['kode_resi']); ?></span>
+                            <div class="kol-sub mt-1">Berikan ke pelanggan untuk melacak progres di <?= h(urlLacak()); ?></div>
+                        <?php else: ?>
+                            <span class="text-secondary">Belum ada</span>
+                        <?php endif; ?>
+                    </dd>
                     <dt>Kendaraan</dt>
                     <dd><?= h($servis['merk']); ?> (<?= h($servis['tahun']); ?>)<br><span class="kol-sub"><?= h($servis['nopol']); ?></span></dd>
                     <dt>Pemilik</dt>

@@ -6,6 +6,7 @@ if (!isset($_SESSION['admin_bengkel'])) {
     pindah('index.php');
 }
 
+// ---------- Tambah (ID dibuat otomatis: SP001, SP002, ...) ----------
 if (isset($_POST['tambah'])) {
     $nama    = dariPost($conn, 'nama', 100);
     $satuan  = dariPost($conn, 'satuan', 20) ?: 'pcs';
@@ -25,6 +26,7 @@ if (isset($_POST['tambah'])) {
     pindah('sparepart.php');
 }
 
+// ---------- Ubah (stok juga bisa dikoreksi langsung di sini) ----------
 if (isset($_POST['ubah'])) {
     $id_mentah = potong($_POST['id'] ?? '', 50);
     $id        = mysqli_real_escape_string($conn, $id_mentah);
@@ -45,6 +47,7 @@ if (isset($_POST['ubah'])) {
     pindah('sparepart.php');
 }
 
+// ---------- Isi stok (barang masuk) ----------
 if (isset($_POST['isi_stok'])) {
     $id_mentah = potong($_POST['id'] ?? '', 50);
     $id        = mysqli_real_escape_string($conn, $id_mentah);
@@ -59,6 +62,7 @@ if (isset($_POST['isi_stok'])) {
     pindah('sparepart.php');
 }
 
+// ---------- Hapus (sparepart yang pernah dipakai servis tidak boleh dihapus) ----------
 if (isset($_POST['hapus'])) {
     $id_mentah = potong($_POST['id_hapus'] ?? '', 50);
     $id        = mysqli_real_escape_string($conn, $id_mentah);
@@ -77,6 +81,7 @@ if (isset($_POST['hapus'])) {
     pindah('sparepart.php');
 }
 
+// ---------- Daftar ----------
 $keyword = potong($_GET['cari'] ?? '', 100);
 $kondisi = pilihan($_GET['kondisi'] ?? '', ['', 'menipis'], '');
 $urut    = pilihan($_GET['urut'] ?? 'id', ['id', 'nama', 'stok'], 'id');
@@ -192,6 +197,7 @@ include 'partials/header.php';
     </div>
 </div>
 
+<!-- Modal tambah -->
 <div class="modal fade" id="modalTambah" tabindex="-1" aria-labelledby="judulModalTambah" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -243,6 +249,7 @@ include 'partials/header.php';
     </div>
 </div>
 
+<!-- Modal edit -->
 <div class="modal fade" id="modalEdit" tabindex="-1" aria-labelledby="judulModalEdit" aria-hidden="true" data-isi-form>
     <div class="modal-dialog">
         <div class="modal-content">
@@ -295,6 +302,7 @@ include 'partials/header.php';
     </div>
 </div>
 
+<!-- Modal isi stok -->
 <div class="modal fade" id="modalStok" tabindex="-1" aria-labelledby="judulModalStok" aria-hidden="true" data-isi-form>
     <div class="modal-dialog modal-sm">
         <div class="modal-content">

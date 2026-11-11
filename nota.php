@@ -6,6 +6,7 @@ if (!isset($_SESSION['admin_bengkel'])) {
     pindah('index.php');
 }
 
+// Nota untuk satu servis atau satu restorasi. Dibuka di tab baru, siap dicetak (Ctrl+P).
 $jenis     = pilihan($_GET['jenis'] ?? '', ['servis', 'restorasi'], 'servis');
 $id_mentah = potong($_GET['id'] ?? '', 50);
 $id        = mysqli_real_escape_string($conn, $id_mentah);
@@ -24,6 +25,7 @@ if (!$nota) {
     pindah($jenis . '.php');
 }
 
+// Baris rincian: [keterangan, jumlah, harga, subtotal]
 $baris = [];
 if ($jenis === 'servis') {
     $baris[] = ['Jasa servis: ' . $nota['keluhan'], '1', $nota['biaya_jasa'], $nota['biaya_jasa']];
@@ -74,6 +76,9 @@ $judul_nota = ($jenis === 'servis' ? 'Nota Servis ' : 'Nota Restorasi ') . $nota
         .tanda { display: flex; gap: 48px; text-align: center; color: var(--abu); font-size: 12px; }
         .tanda div { width: 130px; }
         .tanda span { display: block; height: 56px; border-bottom: 1px solid var(--tinta); margin-bottom: 4px; }
+        .lacak { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; margin-top: 24px; padding: 12px 16px; border: 1px dashed var(--abu); }
+        .lacak p { margin: 0; color: var(--abu); font-size: 12px; }
+        .lacak strong { display: block; font-size: 20px; letter-spacing: .1em; color: var(--tinta); font-family: Consolas, "Courier New", monospace; }
         .terima { margin-top: 24px; text-align: center; color: var(--abu); font-size: 12px; }
         @media (max-width: 600px) {
             .kertas { padding: 20px 16px; }
@@ -157,6 +162,16 @@ $judul_nota = ($jenis === 'servis' ? 'Nota Servis ' : 'Nota Restorasi ') . $nota
                 <div><span></span>Hormat kami</div>
             </div>
         </div>
+
+        <?php if ($jenis === 'servis' && !empty($nota['kode_resi'])): ?>
+            <div class="lacak">
+                <div>
+                    <p>Kode lacak servis</p>
+                    <strong><?= h($nota['kode_resi']); ?></strong>
+                </div>
+                <p>Pantau progres kendaraan Anda kapan saja:<br>buka <strong style="display:inline;font-size:12px;letter-spacing:0"><?= h(urlLacak()); ?></strong><br>lalu masukkan kode lacak atau nopol.</p>
+            </div>
+        <?php endif; ?>
 
         <p class="terima">Terima kasih atas kepercayaan Anda. Simpan nota ini sebagai bukti servis.</p>
     </main>

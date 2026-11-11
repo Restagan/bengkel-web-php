@@ -6,6 +6,7 @@ if (!isset($_SESSION['admin_bengkel'])) {
     pindah('index.php');
 }
 
+// ---------- Tambah (ID dibuat otomatis: M001, M002, ...) ----------
 if (isset($_POST['tambah'])) {
     $nama      = dariPost($conn, 'nama', 100);
     $telp      = dariPost($conn, 'telp', 20);
@@ -23,6 +24,7 @@ if (isset($_POST['tambah'])) {
     pindah('mekanik.php');
 }
 
+// ---------- Ubah ----------
 if (isset($_POST['ubah'])) {
     $id_mentah = potong($_POST['id'] ?? '', 50);
     $id        = mysqli_real_escape_string($conn, $id_mentah);
@@ -41,6 +43,7 @@ if (isset($_POST['ubah'])) {
     pindah('mekanik.php');
 }
 
+// ---------- Hapus (servis dan restorasi lamanya tetap ada, kolom mekaniknya menjadi kosong) ----------
 if (isset($_POST['hapus'])) {
     $id_mentah = potong($_POST['id_hapus'] ?? '', 50);
     $id        = mysqli_real_escape_string($conn, $id_mentah);
@@ -54,6 +57,7 @@ if (isset($_POST['hapus'])) {
     pindah('mekanik.php');
 }
 
+// ---------- Daftar ----------
 $keyword = potong($_GET['cari'] ?? '', 100);
 $sort    = pilihan(strtoupper($_GET['sort'] ?? 'ASC'), ['ASC', 'DESC'], 'ASC');
 $kw      = mysqli_real_escape_string($conn, $keyword);
@@ -153,6 +157,7 @@ include 'partials/header.php';
     </div>
 </div>
 
+<!-- Modal tambah -->
 <div class="modal fade" id="modalTambah" tabindex="-1" aria-labelledby="judulModalTambah" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -189,6 +194,7 @@ include 'partials/header.php';
     </div>
 </div>
 
+<!-- Modal edit -->
 <div class="modal fade" id="modalEdit" tabindex="-1" aria-labelledby="judulModalEdit" aria-hidden="true" data-isi-form>
     <div class="modal-dialog">
         <div class="modal-content">
