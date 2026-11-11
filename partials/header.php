@@ -1,26 +1,4 @@
 <?php
-/*
- * Header bersama untuk semua halaman: <head>, navbar, dan strip livery.
- *
- * Isi variabel ini SEBELUM memanggil include 'partials/header.php':
- *   $judul_halaman  (wajib)     teks judul tab browser
- *   $menu_aktif     (opsional)  dashboard | pelanggan | kendaraan | servis | restorasi
- *   $tanpa_navbar   (opsional)  true untuk halaman login
- *   $body_class     (opsional)  class tambahan untuk <body>
- *
- * Logo opsional: taruh file gambar di assets/img/logo.png
- * dan logo akan tampil otomatis di navbar dan halaman login.
- */
-
-if (!function_exists('kelasStatus')) {
-    // Menentukan warna label status (lihat .st-* di assets/css/tema-gr.css)
-    function kelasStatus($status) {
-        $s = strtolower(trim($status));
-        if ($s === 'selesai')    return 'st-selesai';
-        if ($s === 'dikerjakan') return 'st-dikerjakan';
-        return 'st-menunggu';
-    }
-}
 
 $menu_aktif   = $menu_aktif   ?? '';
 $tanpa_navbar = $tanpa_navbar ?? false;
@@ -33,6 +11,9 @@ $menu = [
     'kendaraan' => ['kendaraan.php', 'Kendaraan'],
     'servis'    => ['servis.php',    'Servis'],
     'restorasi' => ['restorasi.php', 'Restorasi'],
+    'sparepart' => ['sparepart.php', 'Sparepart'],
+    'mekanik'   => ['mekanik.php',   'Mekanik'],
+    'laporan'   => ['laporan.php',   'Laporan'],
 ];
 ?>
 <!DOCTYPE html>
@@ -51,7 +32,7 @@ $menu = [
 <body class="gr-body <?= htmlspecialchars($body_class); ?>">
 
 <?php if (!$tanpa_navbar): ?>
-    <nav class="navbar navbar-expand-lg gr-navbar">
+    <nav class="navbar navbar-expand-xl gr-navbar">
         <div class="container">
             <a class="navbar-brand gr-brand" href="dashboard.php">
                 <?php if ($logo_ada): ?>

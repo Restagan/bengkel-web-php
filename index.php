@@ -3,8 +3,8 @@ session_start();
 require 'koneksi.php';
 
 if (isset($_POST['login'])) {
-    $username = $_POST['username'];
-    $password = $_POST['password'];
+    $username = dariPost($conn, 'username', 50);
+    $password = dariPost($conn, 'password', 255);
 
     $cek = mysqli_query($conn, "SELECT * FROM admin WHERE username='$username' AND password='$password'");
 

@@ -1,5 +1,0 @@
-Taruh file logo Anda di folder ini dengan nama: logo.png
-
-Logo akan tampil otomatis di navbar dan halaman login.
-Saran ukuran: tinggi sekitar 100 px, latar transparan, desain berwarna terang agar terbaca di latar hitam.
-Jika file logo.png tidak ada, situs tetap tampil normal tanpa logo.

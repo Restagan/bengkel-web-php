@@ -1,34 +1,22 @@
-/* =====================================================================
-   TEMA BALAP: hitam, merah, putih
-   Dipakai di atas Bootstrap 5.3 (mode gelap, data-bs-theme="dark").
-
-   Satu ide utama: garis livery miring. Kemiringan --gr-slant dipakai di
-   strip navbar, penanda judul, tombol, label status, dan bar pendapatan.
-   Panel dan tabel sengaja dibuat polos supaya garis miring itu menonjol.
-
-   Ingin ganti warna? Cukup ubah variabel di bagian ":root" di bawah.
-   ===================================================================== */
-
 :root,
 [data-bs-theme="dark"] {
-  --gr-asphalt:   #0a0a0c;   /* latar halaman */
-  --gr-panel:     #141418;   /* panel, kartu, modal */
-  --gr-panel-hi:  #1c1c22;   /* panel yang disorot */
-  --gr-line:      #2a2a31;   /* garis pemisah */
-  --gr-red:       #eb0a1e;   /* merah utama */
-  --gr-red-hot:   #ff4455;   /* merah terang untuk teks kecil dan hover */
-  --gr-red-deep:  #a30614;   /* merah tua */
+  --gr-asphalt:   #0a0a0c;
+  --gr-panel:     #141418;
+  --gr-panel-hi:  #1c1c22;
+  --gr-line:      #2a2a31;
+  --gr-red:       #eb0a1e;
+  --gr-red-hot:   #ff4455;
+  --gr-red-deep:  #a30614;
   --gr-white:     #f4f4f5;
-  --gr-grey:      #9b9ba5;   /* teks sekunder */
-  --gr-amber:     #ffb200;   /* status Dikerjakan */
-  --gr-green:     #2fd07f;   /* status Selesai */
+  --gr-grey:      #9b9ba5;
+  --gr-amber:     #ffb200;
+  --gr-green:     #2fd07f;
 
-  --gr-slant: -22deg;        /* kemiringan livery */
+  --gr-slant: -22deg;
 
   --gr-font-display: "Chakra Petch", "Arial Narrow", "Segoe UI", sans-serif;
   --gr-font-body:    "Barlow", "Segoe UI", system-ui, -apple-system, sans-serif;
 
-  /* Menimpa variabel bawaan Bootstrap */
   --bs-body-bg: var(--gr-asphalt);
   --bs-body-color: var(--gr-white);
   --bs-body-font-family: var(--gr-font-body);
@@ -41,7 +29,6 @@
 
 ::selection { background: var(--gr-red); color: #fff; }
 
-/* ---------- Dasar halaman ---------- */
 
 body.gr-body {
   display: flex;
@@ -56,7 +43,6 @@ body.gr-body {
 
 :focus-visible { outline: 2px solid var(--gr-white); outline-offset: 2px; }
 
-/* ---------- Penanda miring (dipakai berulang) ---------- */
 
 .gr-mark,
 .gr-title::before {
@@ -69,8 +55,6 @@ body.gr-body {
     var(--gr-red) 0 58%, transparent 58% 74%, var(--gr-white) 74% 100%);
   transform: skewX(var(--gr-slant));
 }
-
-/* ---------- Navbar dan strip ---------- */
 
 .gr-navbar {
   background: #050506;
@@ -112,7 +96,7 @@ body.gr-body {
   transform: skewX(var(--gr-slant));
 }
 .gr-navbar .btn-keluar { margin: .5rem 0 .75rem; }
-@media (min-width: 992px) { .gr-navbar .btn-keluar { margin: 0; } }
+@media (min-width: 1200px) { .gr-navbar .btn-keluar { margin: 0; } }
 
 .gr-stripe {
   height: 8px;
@@ -132,7 +116,6 @@ body.gr-body {
   color: var(--gr-grey);
 }
 
-/* ---------- Judul halaman ---------- */
 
 .gr-title {
   display: flex;
@@ -155,7 +138,6 @@ body.gr-body {
   font-size: 1.2rem;
 }
 
-/* ---------- Panel ---------- */
 
 .gr-panel {
   background: var(--gr-panel);
@@ -184,7 +166,6 @@ body.gr-body {
   font-variant-numeric: tabular-nums;
 }
 
-/* ---------- Tabel ---------- */
 
 .table-gr {
   --bs-table-bg: transparent;
@@ -197,7 +178,7 @@ body.gr-body {
   margin: 0;
 }
 .table-gr thead th {
-  padding: .9rem 1rem;
+  padding: .9rem .8rem;
   background: #0d0d10;
   border-bottom: 2px solid var(--gr-line);
   font-weight: 600;
@@ -205,7 +186,7 @@ body.gr-body {
   color: var(--gr-grey);
   white-space: nowrap;
 }
-.table-gr tbody td { padding: .85rem 1rem; vertical-align: middle; }
+.table-gr tbody td { padding: .85rem .8rem; vertical-align: middle; }
 .table-gr.table-hover > tbody > tr:hover > td:first-child {
   box-shadow: inset 3px 0 0 var(--gr-red),
               inset 0 0 0 9999px var(--bs-table-bg-state, transparent);
@@ -224,7 +205,13 @@ body.gr-body {
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
-.table-gr .kol-aksi { white-space: nowrap; }
+.table-gr .kol-aksi { min-width: 13rem; }
+.table-gr .kol-hapus { width: 1%; white-space: nowrap; text-align: right; }
+.table-gr .kol-kendaraan { min-width: 11rem; }
+.table-gr .kol-uraian { min-width: 9rem; }
+.table-gr .kol-tgl { white-space: nowrap; }
+.table-gr .kol-rp .kol-sub { white-space: normal; max-width: 13rem; }
+.kol-aksi .btn, .kol-aksi form { margin: 0 .2rem .3rem 0; vertical-align: middle; }
 .table-gr tbody td.gr-empty {
   padding: 2.5rem 1rem;
   text-align: center;
@@ -232,7 +219,6 @@ body.gr-body {
 }
 .table-gr tbody td.gr-empty strong { color: var(--gr-white); }
 
-/* ---------- Label status ---------- */
 
 .st {
   display: inline-flex;
@@ -243,6 +229,7 @@ body.gr-body {
   font-weight: 600;
   font-size: .88rem;
   clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+  white-space: nowrap;
 }
 .st::before {
   content: "";
@@ -256,7 +243,6 @@ body.gr-body {
 .st-dikerjakan::before { animation: gr-kedip 1.6s ease-in-out infinite; }
 @keyframes gr-kedip { 50% { opacity: .25; } }
 
-/* ---------- Tombol (jajaran genjang) ---------- */
 
 .btn {
   --bs-btn-font-family: var(--gr-font-display);
@@ -266,7 +252,7 @@ body.gr-body {
   --bs-btn-padding-x: 1.5rem;
   --bs-btn-padding-y: .55rem;
   --gr-cut: 10px;
-  background-image: none;   /* buang gradien bawaan jika ada tema Bootstrap lain */
+  background-image: none;
   color: var(--bs-btn-color);
   letter-spacing: .02em;
   clip-path: polygon(var(--gr-cut) 0, 100% 0,
@@ -279,7 +265,6 @@ body.gr-body {
   --bs-btn-font-size: .9rem;
   --gr-cut: 7px;
 }
-/* Garis fokus di luar bentuk akan terpotong, jadi pakai bayangan di dalam */
 .btn:focus-visible {
   outline: none;
   box-shadow: inset 0 0 0 2px #fff;
@@ -301,7 +286,7 @@ body.gr-body {
   --bs-btn-active-color: #fff;
   --bs-btn-active-bg: #44444e;
 }
-.btn-info {            /* dipakai untuk "Ubah status" */
+.btn-info {
   --bs-btn-color: #fff;
   --bs-btn-bg: #24242b;
   --bs-btn-hover-color: #0a0a0c;
@@ -309,7 +294,7 @@ body.gr-body {
   --bs-btn-active-color: #0a0a0c;
   --bs-btn-active-bg: #d9d9de;
 }
-.btn-danger {          /* dipakai untuk "Hapus" dan "Keluar" */
+.btn-danger {
   --bs-btn-color: #ff7a85;
   --bs-btn-bg: #2b0b10;
   --bs-btn-hover-color: #fff;
@@ -318,7 +303,6 @@ body.gr-body {
   --bs-btn-active-bg: var(--gr-red-deep);
 }
 
-/* ---------- Form ---------- */
 
 .form-label {
   margin-bottom: .35rem;
@@ -351,7 +335,6 @@ body.gr-body {
   border-left: 4px solid var(--gr-red);
 }
 
-/* ---------- Modal ---------- */
 
 .modal-content {
   background: var(--gr-panel);
@@ -369,7 +352,6 @@ body.gr-body {
 }
 .modal-backdrop { --bs-backdrop-opacity: .75; }
 
-/* ---------- Dashboard ---------- */
 
 .gr-tile {
   height: 100%;
@@ -396,7 +378,6 @@ body.gr-body {
   font-size: 1.05rem;
   color: var(--gr-grey);
 }
-/* Kartu pendapatan: satu-satunya blok merah penuh, dengan sisi kanan miring */
 .gr-tile-hot {
   padding-right: 3rem;
   background: var(--gr-red);
@@ -471,10 +452,6 @@ body.gr-body {
 }
 .gr-link-card span { font-size: .9rem; color: var(--gr-grey); }
 
-/* ---------- Halaman login ---------- */
-
-/* Garis livery yang melintang di belakang halaman: satu-satunya
-   elemen besar yang berani di seluruh situs. */
 body.gr-login::before {
   content: "";
   position: fixed;
@@ -492,7 +469,6 @@ body.gr-login::before {
       transparent 67%);
 }
 @media (max-width: 991.98px) {
-  /* Di layar kecil garis melewati teks, jadi diredupkan agar teks tetap terbaca */
   body.gr-login::before { opacity: .38; }
 }
 .gr-login .gr-main {
@@ -520,11 +496,191 @@ body.gr-login::before {
   box-shadow: 0 30px 70px -20px rgba(0, 0, 0, .85);
 }
 
-/* ---------- Hormati pengaturan "kurangi gerakan" ---------- */
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation: none !important;
     transition: none !important;
   }
+}
+
+
+.kol-sub {
+  font-family: var(--gr-font-body);
+  font-weight: 400;
+  font-size: .82rem;
+  letter-spacing: 0;
+  color: var(--gr-grey);
+}
+.table-gr .kol-id .kol-sub, .table-gr .kol-rp .kol-sub { display: block; }
+.gr-back {
+  font-size: .85rem;
+  font-weight: 600;
+  color: var(--gr-grey);
+  text-decoration: none;
+}
+.gr-back:hover, .gr-back:focus-visible { color: var(--gr-red-hot); }
+.gr-catatan { margin: 0 0 1rem; color: var(--gr-grey); font-size: .92rem; }
+.gr-catatan strong { color: var(--gr-white); }
+.gr-panel-pad { padding: 1.25rem 1.4rem; }
+.form-text { color: var(--gr-grey); }
+
+
+.alert-success {
+  --bs-alert-bg: rgba(47, 208, 127, .1);
+  --bs-alert-color: #a8ecc9;
+  --bs-alert-border-color: rgba(47, 208, 127, .35);
+  border-radius: 0;
+  border-left: 4px solid var(--gr-green);
+}
+.alert-warning {
+  --bs-alert-bg: rgba(255, 178, 0, .1);
+  --bs-alert-color: #ffd98a;
+  --bs-alert-border-color: rgba(255, 178, 0, .35);
+  border-radius: 0;
+  border-left: 4px solid var(--gr-amber);
+}
+.alert a { color: inherit; font-weight: 600; }
+
+
+.input-group-text {
+  background: var(--gr-panel-hi);
+  border: 1px solid var(--gr-line);
+  border-radius: 0;
+  font-family: var(--gr-font-display);
+  font-weight: 600;
+  color: var(--gr-grey);
+}
+.input-group > .form-control { border-radius: 0; }
+.form-control[readonly] {
+  background-color: #101014;
+  color: var(--gr-grey);
+  font-family: var(--gr-font-display);
+  font-weight: 600;
+}
+.form-control[readonly]:focus { border-color: var(--gr-line); box-shadow: none; }
+.form-select option { background: #0c0c0f; color: #fff; }
+
+
+.st-lunas   { background: rgba(47, 208, 127, .16);  color: var(--gr-green); }
+.st-belum   { background: rgba(235, 10, 30, .16);   color: #ff7a85; }
+.st-aman    { background: rgba(47, 208, 127, .16);  color: var(--gr-green); }
+.st-menipis { background: rgba(255, 178, 0, .16);   color: var(--gr-amber); }
+.st-habis   { background: rgba(235, 10, 30, .16);   color: #ff7a85; }
+
+
+.table-gr tfoot td {
+  padding: .8rem 1rem;
+  background: #0d0d10;
+  border-top: 2px solid var(--gr-line);
+  border-bottom: 0;
+  color: var(--gr-grey);
+}
+.table-gr tfoot .baris-total td {
+  color: #fff;
+  font-family: var(--gr-font-display);
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+
+.gr-dl {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: .7rem 1.25rem;
+  margin: 0;
+}
+.gr-dl dt { font-weight: 600; font-size: .92rem; color: var(--gr-grey); }
+.gr-dl dd { margin: 0; overflow-wrap: anywhere; }
+.gr-dl dd .st { margin: 0 .35rem .25rem 0; }
+
+
+.gr-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}
+.gr-tiles .gr-tile {
+  display: block;
+  padding: 1rem 1.2rem;
+  border-left-color: var(--gr-line);
+  color: inherit;
+  text-decoration: none;
+}
+.gr-tiles .gr-tile span { display: block; font-size: .9rem; color: var(--gr-grey); }
+.gr-tiles .gr-tile strong {
+  display: block;
+  margin: .15rem 0;
+  font-family: var(--gr-font-display);
+  font-weight: 700;
+  font-size: 1.45rem;
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+.gr-tiles .gr-tile small { display: block; font-size: .85rem; color: var(--gr-grey); }
+.gr-tiles .gr-tile-merah  { border-left-color: var(--gr-red); }
+.gr-tiles .gr-tile-hijau  { border-left-color: var(--gr-green); }
+.gr-tiles .gr-tile-kuning { border-left-color: var(--gr-amber); }
+.gr-tiles a.gr-tile:hover, .gr-tiles a.gr-tile:focus-visible { background: var(--gr-panel-hi); }
+
+
+.gr-pintas { display: flex; flex-wrap: wrap; gap: .4rem 1.1rem; margin-top: .8rem; }
+.gr-pintas a { font-size: .88rem; font-weight: 600; text-decoration: none; }
+.gr-pintas a:hover { text-decoration: underline; }
+.gr-daftar { margin: 0; padding: 0; list-style: none; }
+.gr-daftar li {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: .75rem;
+  padding: .6rem 0;
+  border-bottom: 1px solid var(--gr-line);
+}
+.gr-daftar li:last-child { border-bottom: 0; }
+.gr-daftar small { display: block; font-size: .82rem; color: var(--gr-grey); }
+.gr-daftar strong {
+  font-family: var(--gr-font-display);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+
+.gr-grafik {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: .6rem;
+  align-items: end;
+  padding-top: .5rem;
+}
+.gr-grafik .kolom { display: flex; flex-direction: column; justify-content: flex-end; text-align: center; }
+.gr-grafik .nilai {
+  margin-bottom: .3rem;
+  font-family: var(--gr-font-display);
+  font-weight: 600;
+  font-size: .78rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--gr-grey);
+}
+.gr-grafik .batang {
+  min-height: 3px;
+  background: #3a3a43;
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+}
+.gr-grafik .kolom.sekarang .batang { background: var(--gr-red); }
+.gr-grafik .kolom.sekarang .nilai { color: #fff; }
+.gr-label-bulan {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: .6rem;
+  margin-top: .45rem;
+  text-align: center;
+  font-size: .85rem;
+  color: var(--gr-grey);
+}
+
+
+@media print {
+  body.gr-body { background: #fff; color: #000; }
+  .gr-navbar, .gr-toolbar, footer, .btn { display: none !important; }
 }
