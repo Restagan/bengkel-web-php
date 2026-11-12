@@ -8,13 +8,13 @@ Proyek ini hanya untuk dijalankan secara lokal.
 | Modul      | Fitur                                                                                                   |
 |------------|---------------------------------------------------------------------------------------------------------|
 | Login      | Login admin (tabel `admin`), logout                                                                     |
-| Dashboard  | Total pelanggan/kendaraan/pendapatan, pendapatan bulan ini, tagihan belum dibayar, pekerjaan berjalan, stok menipis, grafik 6 bulan, daftar pekerjaan belum selesai |
+| Dashboard  | **Kartu peringatan stok kritis (sparepart dengan stok 3 atau kurang) di bagian atas**, total pelanggan/kendaraan/pendapatan, pendapatan bulan ini, tagihan belum dibayar, pekerjaan berjalan, stok menipis, grafik 6 bulan, daftar pekerjaan belum selesai |
 | Pelanggan  | **ID otomatis (P001, P002, ...)**, tambah, **ubah**, cari, urutkan, hapus                                |
 | Kendaraan  | **ID otomatis (K001, ...)**, tambah, **ubah**, cari (ID/merk/nopol/pemilik), hapus, **riwayat per kendaraan** |
 | Servis     | **ID otomatis (S001, ...)**, tambah, **ubah**, **mekanik**, **tanggal masuk/selesai**, **status bayar**, filter status/bayar, urut tanggal/biaya, **suku cadang + stok**, **cetak nota**, **kode resi (SRV-XXXXXX)** |
 | Lacak servis | **Halaman publik `lacak.php` (tanpa login): pelanggan melacak progres dengan nopol atau kode resi, timeline Menunggu / Dikerjakan / Selesai, pembaruan otomatis** |
 | Restorasi  | **ID otomatis (R001, ...)**, tambah, **ubah**, mekanik, tanggal, status bayar, filter, **cetak nota**     |
-| Sparepart  | **ID otomatis (SP001, ...)**, harga, stok, batas stok minimum, **isi stok**, filter stok menipis         |
+| Sparepart  | **ID otomatis (SP001, ...)**, harga, stok, batas stok minimum, **isi stok**, filter stok menipis dan **stok kritis**   |
 | Mekanik    | **ID otomatis (M001, ...)**, tambah, ubah, hapus, jumlah pekerjaan aktif dan selesai                      |
 | Laporan    | Pendapatan per periode (bulan ini/bulan lalu/tahun ini/semua), sudah dibayar vs belum, per mekanik, **unduh CSV untuk Excel** |
 
@@ -34,6 +34,13 @@ Tulisan tebal = fitur terbaru.
 - **Tanggal selesai** terisi otomatis saat status diubah menjadi Selesai, dan dikosongkan lagi jika status dikembalikan.
 - **Nota**: tombol Nota membuka halaman siap cetak di tab baru (Ctrl+P). Nama, alamat, dan telepon bengkel yang tampil di nota diatur di bagian atas `fungsi.php` (`NAMA_BENGKEL`, `ALAMAT_BENGKEL`, `TELP_BENGKEL`).
 - **Laporan** dihitung berdasarkan **tanggal masuk** pekerjaan. File CSV memakai pemisah titik koma (`;`) dan baris `sep=;` di awal, supaya Excel (termasuk yang berbahasa Indonesia) langsung memisahkan kolom dengan benar.
+
+## Inventory Alert (Dashboard)
+
+Di atas dashboard muncul kartu peringatan kuning berisi nama sparepart yang stoknya **3 atau kurang** (stok 0 ditandai "Habis" dan diurutkan paling atas).
+Kartu hilang sendiri bila semua stok di atas 3. Maksimal 12 nama ditampilkan, sisanya diringkas "dan N sparepart lainnya".
+Tombol **Kelola stok** membuka `sparepart.php?kondisi=kritis`. Angka batas diubah lewat konstanta `BATAS_STOK_KRITIS` di `fungsi.php`.
+Ini terpisah dari kartu "Stok menipis", yang memakai batas minimum masing-masing sparepart.
 
 ## Live Tracking Progress Servis (`lacak.php`)
 

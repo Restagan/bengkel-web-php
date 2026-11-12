@@ -6,7 +6,6 @@ if (!isset($_SESSION['admin_bengkel'])) {
     pindah('index.php');
 }
 
-// Satu angka dari satu query (mis. COUNT atau SUM)
 function satuAngka($conn, $sql) {
     $baris = mysqli_fetch_row(mysqli_query($conn, $sql));
     return $baris[0] ?? 0;
@@ -19,7 +18,6 @@ $pendapatan_servis    = satuAngka($conn, "SELECT COALESCE(SUM(biaya), 0) FROM se
 $pendapatan_restorasi = satuAngka($conn, "SELECT COALESCE(SUM(biaya), 0) FROM restorasi");
 $total_pendapatan     = $pendapatan_servis + $pendapatan_restorasi;
 
-// Persentase untuk bar rincian pendapatan (hindari pembagian dengan nol)
 $persen_servis    = $total_pendapatan > 0 ? round($pendapatan_servis / $total_pendapatan * 100) : 0;
 $persen_restorasi = $total_pendapatan > 0 ? 100 - $persen_servis : 0;
 
@@ -29,7 +27,6 @@ $jml_berjalan  = satuAngka($conn, "SELECT COUNT(*) FROM servis WHERE status <> '
                + satuAngka($conn, "SELECT COUNT(*) FROM restorasi WHERE status <> 'Selesai'");
 $jml_menipis   = satuAngka($conn, "SELECT COUNT(*) FROM sparepart WHERE stok <= stok_minimum");
 
-// ---------- Pendapatan 6 bulan terakhir (berdasarkan tanggal masuk) ----------
 $bulan_ini = date('Y-m');
 $enam      = [];
 for ($i = 5; $i >= 0; $i--) {
@@ -48,9 +45,8 @@ while ($r = mysqli_fetch_assoc($hasil)) {
     if (isset($enam[$r['bulan']])) { $enam[$r['bulan']] = (float)$r['total']; }
 }
 $maks_bulan = max($enam);
-$maks_px    = 150; // tinggi batang tertinggi (piksel)
+$maks_px    = 150;
 
-// ---------- Pekerjaan yang belum selesai (yang paling lama menunggu di atas) ----------
 $berjalan = mysqli_query($conn, "SELECT kerja.*, kendaraan.merk, kendaraan.nopol, mekanik.nama AS nama_mekanik
     FROM (
         SELECT 'Servis' AS jenis, id, id_kendaraan, id_mekanik, keluhan AS uraian, status, tanggal_masuk FROM servis WHERE status <> 'Selesai'
@@ -64,6 +60,20 @@ $berjalan = mysqli_query($conn, "SELECT kerja.*, kendaraan.merk, kendaraan.nopol
 
 $menipis = mysqli_query($conn, "SELECT id, nama, satuan, stok, stok_minimum FROM sparepart
     WHERE stok <= stok_minimum ORDER BY stok ASC, nama ASC LIMIT 6");
+
+$stok_kritis  = [];
+$hasil_kritis = mysqli_query($conn, 'SELECT id, nama, satuan, stok FROM sparepart
+    WHERE stok <= ' . (int)BATAS_STOK_KRITIS . ' ORDER BY stok ASC, nama ASC');
+while ($k = mysqli_fetch_assoc($hasil_kritis)) {
+    $stok_kritis[] = $k;
+}
+$jml_kritis = count($stok_kritis);
+$jml_habis  = 0;
+foreach ($stok_kritis as $k) {
+    if ((int)$k['stok'] <= 0) { $jml_habis++; }
+}
+$kritis_tampil = array_slice($stok_kritis, 0, 12);
+$kritis_lain   = $jml_kritis - count($kritis_tampil);
 
 $tunggakan_url = 'laporan.php?' . http_build_query(['dari' => '2000-01-01', 'sampai' => hariIni(), 'bayar' => 'Belum Lunas']);
 
@@ -79,6 +89,32 @@ include 'partials/header.php';
     </div>
 
     <?= tampilFlash(); ?>
+
+    <?php if ($jml_kritis > 0): ?>
+        <div class="alert alert-warning gr-alert-stok" role="alert">
+            <div class="gr-alert-stok-judul">
+                <strong><?= $jml_kritis; ?> sparepart hampir habis</strong>
+                <span>
+                    Sisa stok <?= (int)BATAS_STOK_KRITIS; ?> atau kurang<?= $jml_habis > 0 ? ', ' . $jml_habis . ' di antaranya sudah habis' : ''; ?>.
+                    Segera lakukan restock.
+                </span>
+            </div>
+            <ul class="gr-alert-stok-daftar">
+                <?php foreach ($kritis_tampil as $p): ?>
+                    <li class="<?= (int)$p['stok'] <= 0 ? 'habis' : ''; ?>">
+                        <span class="nama"><?= h($p['nama']); ?></span>
+                        <span class="sisa"><?= (int)$p['stok'] <= 0 ? 'Habis' : 'Sisa ' . (int)$p['stok'] . ' ' . h($p['satuan']); ?></span>
+                    </li>
+                <?php endforeach; ?>
+            </ul>
+            <div class="gr-alert-stok-aksi">
+                <a class="btn btn-secondary btn-sm" href="sparepart.php?kondisi=kritis">Kelola stok</a>
+                <?php if ($kritis_lain > 0): ?>
+                    <span>dan <?= $kritis_lain; ?> sparepart lainnya</span>
+                <?php endif; ?>
+            </div>
+        </div>
+    <?php endif; ?>
 
     <div class="row g-3 mb-3">
         <div class="col-6 col-lg-3">

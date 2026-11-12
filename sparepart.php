@@ -83,7 +83,7 @@ if (isset($_POST['hapus'])) {
 
 // ---------- Daftar ----------
 $keyword = potong($_GET['cari'] ?? '', 100);
-$kondisi = pilihan($_GET['kondisi'] ?? '', ['', 'menipis'], '');
+$kondisi = pilihan($_GET['kondisi'] ?? '', ['', 'menipis', 'kritis'], '');
 $urut    = pilihan($_GET['urut'] ?? 'id', ['id', 'nama', 'stok'], 'id');
 $kw      = mysqli_real_escape_string($conn, $keyword);
 
@@ -92,7 +92,9 @@ $urut_sql = [
     'nama' => 'sparepart.nama ASC',
     'stok' => 'sparepart.stok ASC, sparepart.nama ASC',
 ];
-$syarat_stok = $kondisi === 'menipis' ? 'AND sparepart.stok <= sparepart.stok_minimum' : '';
+$syarat_stok = '';
+if ($kondisi === 'menipis') { $syarat_stok = 'AND sparepart.stok <= sparepart.stok_minimum'; }
+if ($kondisi === 'kritis')  { $syarat_stok = 'AND sparepart.stok <= ' . (int)BATAS_STOK_KRITIS; }
 
 $result = mysqli_query($conn, "SELECT * FROM sparepart
     WHERE (sparepart.id LIKE '%$kw%' OR sparepart.nama LIKE '%$kw%') $syarat_stok
@@ -122,6 +124,7 @@ include 'partials/header.php';
                 <select name="kondisi" class="form-select" aria-label="Kondisi stok">
                     <option value="" <?= $kondisi === '' ? 'selected' : ''; ?>>Semua stok</option>
                     <option value="menipis" <?= $kondisi === 'menipis' ? 'selected' : ''; ?>>Stok menipis atau habis</option>
+                    <option value="kritis" <?= $kondisi === 'kritis' ? 'selected' : ''; ?>>Stok kritis (sisa <?= (int)BATAS_STOK_KRITIS; ?> atau kurang)</option>
                 </select>
             </div>
             <div class="col-md-3">

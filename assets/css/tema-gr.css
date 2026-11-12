@@ -919,3 +919,37 @@ body.gr-login::before {
 .gr-lacak-publik a { font-weight: 600; }
 .lacak-kode-kecil { display: inline-block; font-size: .95rem; }
 .table-gr .kol-id .kol-sub { white-space: nowrap; }   /* kode resi tidak boleh terpotong di dua baris */
+
+.gr-alert-stok { padding: 1rem 1.25rem; margin-bottom: 1.5rem; }
+.gr-alert-stok-judul { display: flex; flex-wrap: wrap; align-items: baseline; gap: .2rem .9rem; margin-bottom: .9rem; }
+.gr-alert-stok-judul strong { font-family: var(--gr-font-display); font-size: 1.2rem; color: #fff; }
+.gr-alert-stok-daftar {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: .5rem;
+  margin: 0 0 1rem;
+  padding: 0;
+  list-style: none;
+}
+.gr-alert-stok-daftar li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: .75rem;
+  padding: .5rem .75rem;
+  background: rgba(0, 0, 0, .3);
+  border-left: 3px solid var(--gr-amber);
+}
+.gr-alert-stok-daftar li.habis { border-left-color: var(--gr-red); }
+.gr-alert-stok-daftar .nama { font-weight: 600; color: #fff; overflow-wrap: anywhere; }
+.gr-alert-stok-daftar .sisa {
+  flex: none;
+  font-family: var(--gr-font-display);
+  font-weight: 700;
+  font-size: .9rem;
+  color: var(--gr-amber);
+  white-space: nowrap;
+}
+.gr-alert-stok-daftar li.habis .sisa { color: #ff6b79; }
+.gr-alert-stok-aksi { display: flex; flex-wrap: wrap; align-items: center; gap: .75rem; }
+.gr-alert-stok .btn-secondary { color: #fff; }

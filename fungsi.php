@@ -13,6 +13,7 @@ const STATUS_KERJA = ['Menunggu', 'Dikerjakan', 'Selesai'];
 const STATUS_BAYAR = ['Belum Lunas', 'Lunas'];
 // Naikkan angka ini jika skema database berubah lagi, supaya pemeriksaan dijalankan ulang di sesi yang sudah login
 const SKEMA_VERSI  = 2;
+const BATAS_STOK_KRITIS = 3;
 const BULAN_PENDEK = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
 
 // ---------- Input dan output yang aman ----------
