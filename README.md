@@ -12,6 +12,7 @@ Proyek ini hanya untuk dijalankan secara lokal.
 | Pelanggan  | **ID otomatis (P001, P002, ...)**, tambah, **ubah**, cari, urutkan, hapus                                |
 | Kendaraan  | **ID otomatis (K001, ...)**, tambah, **ubah**, cari (ID/merk/nopol/pemilik), hapus, **riwayat per kendaraan** |
 | Servis     | **ID otomatis (S001, ...)**, tambah, **ubah**, **mekanik**, **tanggal masuk/selesai**, **status bayar**, filter status/bayar, urut tanggal/biaya, **suku cadang + stok**, **cetak nota**, **kode resi (SRV-XXXXXX)** |
+| Kasir      | **Penjualan sparepart langsung (`kasir.php`): pilih sparepart dari dropdown, isi jumlah, total dan kembalian real-time, stok berkurang otomatis, nota, batalkan penjualan** |
 | Lacak servis | **Halaman publik `lacak.php` (tanpa login): pelanggan melacak progres dengan nopol atau kode resi, timeline Menunggu / Dikerjakan / Selesai, pembaruan otomatis** |
 | Restorasi  | **ID otomatis (R001, ...)**, tambah, **ubah**, mekanik, tanggal, status bayar, filter, **cetak nota**     |
 | Sparepart  | **ID otomatis (SP001, ...)**, harga, stok, batas stok minimum, **isi stok**, filter stok menipis dan **stok kritis**   |
@@ -34,6 +35,29 @@ Tulisan tebal = fitur terbaru.
 - **Tanggal selesai** terisi otomatis saat status diubah menjadi Selesai, dan dikosongkan lagi jika status dikembalikan.
 - **Nota**: tombol Nota membuka halaman siap cetak di tab baru (Ctrl+P). Nama, alamat, dan telepon bengkel yang tampil di nota diatur di bagian atas `fungsi.php` (`NAMA_BENGKEL`, `ALAMAT_BENGKEL`, `TELP_BENGKEL`).
 - **Laporan** dihitung berdasarkan **tanggal masuk** pekerjaan. File CSV memakai pemisah titik koma (`;`) dan baris `sep=;` di awal, supaya Excel (termasuk yang berbahasa Indonesia) langsung memisahkan kolom dengan benar.
+
+## Kasir Penjualan Sparepart (`kasir.php`)
+
+Untuk pembeli yang hanya membeli suku cadang tanpa servis. Menu **Kasir** ada di bilah atas.
+
+1. Pilih sparepart dari dropdown (harga dan stok tampil di tiap pilihan), isi jumlah. Tombol **Tambah baris** untuk barang lain.
+   Sparepart yang stoknya habis tidak bisa dipilih, dan satu sparepart tidak bisa dipilih dua kali.
+2. **Total** dan subtotal tiap baris dihitung langsung saat mengetik, tanpa memuat ulang halaman.
+   Jumlah yang melebihi stok ditandai merah dan tombol simpan dikunci.
+3. **Uang diterima** boleh dikosongkan (dianggap uang pas). Bila diisi, **kembalian** langsung tampil, atau selisih kekurangannya. Tombol **Uang pas** mengisi otomatis.
+4. **Simpan penjualan**: stok tiap sparepart berkurang otomatis. Proses simpan memakai transaksi database, jadi bila salah satu barang stoknya kurang
+   (misalnya terpakai servis di saat yang sama) **seluruh penjualan dibatalkan** dan tidak ada stok yang berkurang.
+5. Setelah tersimpan muncul tombol **Cetak nota**. Daftar **Penjualan terbaru** menampilkan 15 transaksi terakhir.
+   Tombol **Batalkan** menghapus penjualan dan **mengembalikan stok**.
+
+Harga selalu diambil dari database saat disimpan, bukan dari browser, dan disalin ke `penjualan_item.harga_satuan`, jadi nota lama tidak berubah bila harga sparepart naik.
+Sparepart yang pernah terjual tidak bisa dihapus (ubah stoknya menjadi 0 bila tidak dijual lagi).
+ID penjualan otomatis (PJ001, PJ002, ...).
+
+**Database:** tabel `penjualan` dan `penjualan_item` sudah ada di `database.sql` dan `migrasi.sql`.
+Bila Anda sudah menjalankan migrasi sebelumnya, jalankan `migrasi_kasir.sql` sekali saja (halaman penjaga akan menyebutkannya).
+
+Catatan: pendapatan kasir belum dihitung di total pendapatan dashboard dan laporan, yang masih berisi servis dan restorasi.
 
 ## Inventory Alert (Dashboard)
 
@@ -120,6 +144,7 @@ lalu muat ulang halaman. Tanpa pemeriksaan ini, kekurangan tersebut tampil sebag
 bengkel-web/
 ├── database.sql            skema lengkap untuk database BARU
 ├── migrasi.sql             untuk database lama yang datanya ingin dipertahankan
+├── migrasi_kasir.sql       hanya menambah tabel penjualan dan penjualan_item (untuk yang sudah menjalankan migrasi sebelumnya)
 ├── migrasi_resi.sql        hanya menambah kolom kode_resi (untuk yang sudah menjalankan migrasi.sql sebelumnya)
 ├── koneksi.php             koneksi MySQL (memuat fungsi.php)
 ├── fungsi.php              fungsi bantu: ID otomatis, format rupiah, validasi, stok, data bengkel untuk nota
@@ -135,6 +160,7 @@ bengkel-web/
 ├── sparepart.php           stok suku cadang
 ├── mekanik.php             data mekanik
 ├── laporan.php             laporan pendapatan + unduh CSV
+├── kasir.php               kasir penjualan sparepart
 ├── nota.php                nota cetak servis / restorasi (nota servis memuat kode lacak)
 ├── lacak.php               HALAMAN PUBLIK (tanpa login): lacak progres servis dengan nopol / kode resi
 ├── partials/
@@ -143,6 +169,7 @@ bengkel-web/
 └── assets/
     ├── css/tema-gr.css     seluruh tema tampilan balap (warna, tombol, tabel, form)
     ├── js/app.js           titik ribuan otomatis, isi otomatis form edit, konfirmasi hapus
+    ├── js/kasir.js         total, kembalian, dan batas stok real-time di halaman kasir
     ├── js/lacak.js         pembaruan otomatis halaman lacak (cek status tiap 30 detik)
     └── img/                tempat logo opsional (logo.png)
 ```
@@ -178,6 +205,7 @@ Saat pelanggan/kendaraan dihapus, stok dikembalikan hanya untuk servis yang **be
 Proyek ini lokal, tetapi tetap diamankan sewajarnya:
 
 - Halaman publik `lacak.php` hanya menerima nopol atau kode resi dengan format ketat (huruf, angka, strip), tidak menampilkan data pribadi, dan membatasi pencarian yang gagal.
+- Kasir menghitung harga dan memeriksa stok ulang di server, sehingga angka yang dikirim browser tidak dipercaya.
 - Semua isian form di-escape sebelum masuk query (`dariPost()` di `fungsi.php`), jadi tanda petik seperti `D'Angelo` tidak merusak query.
 - Semua teks yang tampil di halaman melewati `h()` (`htmlspecialchars`), jadi `<script>` yang diketik di form hanya tampil sebagai teks.
 - Penghapusan memakai tombol **POST** (bukan link `?hapus=`), sehingga tidak bisa terpicu hanya dengan membuka alamat.

@@ -6,7 +6,6 @@ if (!isset($_SESSION['admin_bengkel'])) {
     pindah('index.php');
 }
 
-// ---------- Tambah (ID dibuat otomatis: P001, P002, ...) ----------
 if (isset($_POST['tambah'])) {
     $nama   = dariPost($conn, 'nama', 100);
     $telp   = dariPost($conn, 'telp', 20);
@@ -24,7 +23,6 @@ if (isset($_POST['tambah'])) {
     pindah('pelanggan.php');
 }
 
-// ---------- Ubah ----------
 if (isset($_POST['ubah'])) {
     $id_mentah = potong($_POST['id'] ?? '', 50);
     $id        = mysqli_real_escape_string($conn, $id_mentah);
@@ -43,12 +41,10 @@ if (isset($_POST['ubah'])) {
     pindah('pelanggan.php');
 }
 
-// ---------- Hapus (kendaraan, servis, dan restorasinya ikut terhapus oleh database) ----------
 if (isset($_POST['hapus'])) {
     $id_mentah = potong($_POST['id_hapus'] ?? '', 50);
     $id        = mysqli_real_escape_string($conn, $id_mentah);
 
-    // Servis yang belum selesai dibatalkan, jadi suku cadangnya dikembalikan ke stok
     kembalikanStokServisBelumSelesai($conn, "id_kendaraan IN (SELECT id FROM kendaraan WHERE id_pelanggan = '$id')");
     mysqli_query($conn, "DELETE FROM pelanggan WHERE id = '$id'");
 
@@ -60,12 +56,10 @@ if (isset($_POST['hapus'])) {
     pindah('pelanggan.php');
 }
 
-// ---------- Daftar ----------
 $keyword = potong($_GET['cari'] ?? '', 100);
 $sort    = pilihan(strtoupper($_GET['sort'] ?? 'ASC'), ['ASC', 'DESC'], 'ASC');
 $kw      = mysqli_real_escape_string($conn, $keyword);
 
-// LENGTH(id) dulu supaya P10 tidak tampil sebelum P9
 $result = mysqli_query($conn, "SELECT pelanggan.*,
         (SELECT COUNT(*) FROM kendaraan WHERE kendaraan.id_pelanggan = pelanggan.id) AS jml_kendaraan
     FROM pelanggan
@@ -162,7 +156,6 @@ include 'partials/header.php';
     </div>
 </div>
 
-<!-- Modal tambah -->
 <div class="modal fade" id="modalTambah" tabindex="-1" aria-labelledby="judulModalTambah" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -199,7 +192,6 @@ include 'partials/header.php';
     </div>
 </div>
 
-<!-- Modal edit (diisi otomatis oleh assets/js/app.js dari atribut data-* tombol Edit) -->
 <div class="modal fade" id="modalEdit" tabindex="-1" aria-labelledby="judulModalEdit" aria-hidden="true" data-isi-form>
     <div class="modal-dialog">
         <div class="modal-content">

@@ -1,13 +1,8 @@
-/*
- * Live tracking: memeriksa perubahan status di server secara berkala.
- * Jika status berubah, halaman dimuat ulang otomatis. Jika tidak, hanya jam "terakhir diperiksa" yang diperbarui.
- * Dipakai oleh lacak.php. Server hanya mengirim "tanda perubahan" (gabungan status), bukan data pelanggan.
- */
 (function () {
   'use strict';
 
   var kotak = document.getElementById('lacakHasil');
-  if (!kotak || !kotak.getAttribute('data-poll')) return; // semua servis sudah selesai: tidak perlu memeriksa
+  if (!kotak || !kotak.getAttribute('data-poll')) return;
 
   var selang = (parseInt(kotak.getAttribute('data-selang'), 10) || 30) * 1000;
   var tanda = kotak.getAttribute('data-tanda');
@@ -30,13 +25,12 @@
         var d = new Date();
         if (jam) jam.textContent = dua(d.getHours()) + ':' + dua(d.getMinutes()) + ':' + dua(d.getSeconds());
       })
-      .catch(function () { /* koneksi terputus sebentar: coba lagi pada putaran berikutnya */ })
+      .catch(function () {})
       .then(function () { sedangMemeriksa = false; });
   }
 
   setInterval(periksa, selang);
 
-  // Kembali ke tab ini setelah lama ditinggal: langsung periksa
   document.addEventListener('visibilitychange', function () {
     if (!document.hidden) periksa();
   });

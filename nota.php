@@ -6,26 +6,31 @@ if (!isset($_SESSION['admin_bengkel'])) {
     pindah('index.php');
 }
 
-// Nota untuk satu servis atau satu restorasi. Dibuka di tab baru, siap dicetak (Ctrl+P).
-$jenis     = pilihan($_GET['jenis'] ?? '', ['servis', 'restorasi'], 'servis');
+$jenis     = pilihan($_GET['jenis'] ?? '', ['servis', 'restorasi', 'penjualan'], 'servis');
 $id_mentah = potong($_GET['id'] ?? '', 50);
 $id        = mysqli_real_escape_string($conn, $id_mentah);
 $uraian    = $jenis === 'servis' ? 'keluhan' : 'deskripsi';
 
-$nota = mysqli_fetch_assoc(mysqli_query($conn, "SELECT $jenis.*, kendaraan.merk, kendaraan.nopol, kendaraan.tahun,
-        pelanggan.nama AS nama_pelanggan, pelanggan.telp AS telp_pelanggan, mekanik.nama AS nama_mekanik
-    FROM $jenis
-    JOIN kendaraan ON $jenis.id_kendaraan = kendaraan.id
-    JOIN pelanggan ON kendaraan.id_pelanggan = pelanggan.id
-    LEFT JOIN mekanik ON $jenis.id_mekanik = mekanik.id
-    WHERE $jenis.id = '$id'"));
+if ($jenis === 'penjualan') {
+    $nota = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM penjualan WHERE id = '$id'"));
+} else {
+    $nota = mysqli_fetch_assoc(mysqli_query($conn, "SELECT $jenis.*, kendaraan.merk, kendaraan.nopol, kendaraan.tahun,
+            pelanggan.nama AS nama_pelanggan, pelanggan.telp AS telp_pelanggan, mekanik.nama AS nama_mekanik
+        FROM $jenis
+        JOIN kendaraan ON $jenis.id_kendaraan = kendaraan.id
+        JOIN pelanggan ON kendaraan.id_pelanggan = pelanggan.id
+        LEFT JOIN mekanik ON $jenis.id_mekanik = mekanik.id
+        WHERE $jenis.id = '$id'"));
+}
 
 if (!$nota) {
     flash('Data untuk nota tidak ditemukan.', 'danger');
-    pindah($jenis . '.php');
+    pindah($jenis === 'penjualan' ? 'kasir.php' : $jenis . '.php');
 }
 
-// Baris rincian: [keterangan, jumlah, harga, subtotal]
+$halaman_kembali = $jenis === 'penjualan' ? 'kasir.php' : $jenis . '.php';
+$total_nota      = $jenis === 'penjualan' ? $nota['total'] : $nota['biaya'];
+
 $baris = [];
 if ($jenis === 'servis') {
     $baris[] = ['Jasa servis: ' . $nota['keluhan'], '1', $nota['biaya_jasa'], $nota['biaya_jasa']];
@@ -35,11 +40,19 @@ if ($jenis === 'servis') {
     while ($r = mysqli_fetch_assoc($hasil)) {
         $baris[] = [$r['nama'], (int)$r['jumlah'] . ' ' . $r['satuan'], $r['harga_satuan'], $r['jumlah'] * $r['harga_satuan']];
     }
+} elseif ($jenis === 'penjualan') {
+    $hasil = mysqli_query($conn, "SELECT penjualan_item.jumlah, penjualan_item.harga_satuan, sparepart.nama, sparepart.satuan
+        FROM penjualan_item JOIN sparepart ON penjualan_item.id_sparepart = sparepart.id
+        WHERE penjualan_item.id_penjualan = '$id' ORDER BY penjualan_item.id ASC");
+    while ($r = mysqli_fetch_assoc($hasil)) {
+        $baris[] = [$r['nama'], (int)$r['jumlah'] . ' ' . $r['satuan'], $r['harga_satuan'], $r['jumlah'] * $r['harga_satuan']];
+    }
 } else {
     $baris[] = ['Restorasi: ' . $nota['deskripsi'], '1', $nota['biaya'], $nota['biaya']];
 }
 
-$judul_nota = ($jenis === 'servis' ? 'Nota Servis ' : 'Nota Restorasi ') . $nota['id'];
+$nama_jenis = ['servis' => 'Servis', 'restorasi' => 'Restorasi', 'penjualan' => 'Penjualan'][$jenis];
+$judul_nota = 'Nota ' . $nama_jenis . ' ' . $nota['id'];
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -69,6 +82,7 @@ $judul_nota = ($jenis === 'servis' ? 'Nota Servis ' : 'Nota Restorasi ') . $nota
         td { padding: 8px; border-bottom: 1px solid var(--garis); vertical-align: top; }
         .kanan { text-align: right; white-space: nowrap; }
         tfoot td { border-bottom: 0; font-weight: 700; font-size: 16px; padding-top: 12px; }
+        tfoot .rinci td { font-weight: 400; font-size: 14px; padding-top: 2px; }
         .bawah { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; flex-wrap: wrap; margin-top: 28px; }
         .cap { display: inline-block; border: 3px solid; padding: 4px 16px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; transform: rotate(-4deg); font-size: 18px; }
         .cap.lunas { color: #12803c; border-color: #12803c; }
@@ -96,7 +110,7 @@ $judul_nota = ($jenis === 'servis' ? 'Nota Servis ' : 'Nota Restorasi ') . $nota
 <body>
     <div class="alat">
         <button type="button" class="utama" id="tombolCetak">Cetak nota</button>
-        <a href="<?= h($jenis); ?>.php" class="biasa">Kembali</a>
+        <a href="<?= h($halaman_kembali); ?>" class="biasa">Kembali</a>
     </div>
 
     <main class="kertas">
@@ -107,25 +121,36 @@ $judul_nota = ($jenis === 'servis' ? 'Nota Servis ' : 'Nota Restorasi ') . $nota
                 <p>Telp. <?= h(TELP_BENGKEL); ?></p>
             </div>
             <div class="no">
-                <p><?= $jenis === 'servis' ? 'Nota servis' : 'Nota restorasi'; ?></p>
+                <p>Nota <?= h(strtolower($nama_jenis)); ?></p>
                 <strong><?= h($nota['id']); ?></strong>
-                <p>Masuk: <?= tanggalIndo($nota['tanggal_masuk']); ?></p>
-                <p>Selesai: <?= $nota['tanggal_selesai'] ? tanggalIndo($nota['tanggal_selesai']) : '-'; ?></p>
+                <?php if ($jenis === 'penjualan'): ?>
+                    <p>Tanggal: <?= tanggalIndo($nota['tanggal']); ?></p>
+                <?php else: ?>
+                    <p>Masuk: <?= tanggalIndo($nota['tanggal_masuk']); ?></p>
+                    <p>Selesai: <?= $nota['tanggal_selesai'] ? tanggalIndo($nota['tanggal_selesai']) : '-'; ?></p>
+                <?php endif; ?>
             </div>
         </div>
 
         <div class="info">
-            <div>
-                <h2>Pelanggan</h2>
-                <p><strong><?= h($nota['nama_pelanggan']); ?></strong></p>
-                <p><?= h($nota['telp_pelanggan']); ?></p>
-            </div>
-            <div>
-                <h2>Kendaraan</h2>
-                <p><strong><?= h($nota['merk']); ?></strong> (<?= h($nota['tahun']); ?>)</p>
-                <p>Nopol: <?= h($nota['nopol']); ?></p>
-                <p>Mekanik: <?= $nota['nama_mekanik'] ? h($nota['nama_mekanik']) : '-'; ?></p>
-            </div>
+            <?php if ($jenis === 'penjualan'): ?>
+                <div>
+                    <h2>Pembeli</h2>
+                    <p><strong><?= $nota['nama_pembeli'] !== null && $nota['nama_pembeli'] !== '' ? h($nota['nama_pembeli']) : 'Pembeli umum'; ?></strong></p>
+                </div>
+            <?php else: ?>
+                <div>
+                    <h2>Pelanggan</h2>
+                    <p><strong><?= h($nota['nama_pelanggan']); ?></strong></p>
+                    <p><?= h($nota['telp_pelanggan']); ?></p>
+                </div>
+                <div>
+                    <h2>Kendaraan</h2>
+                    <p><strong><?= h($nota['merk']); ?></strong> (<?= h($nota['tahun']); ?>)</p>
+                    <p>Nopol: <?= h($nota['nopol']); ?></p>
+                    <p>Mekanik: <?= $nota['nama_mekanik'] ? h($nota['nama_mekanik']) : '-'; ?></p>
+                </div>
+            <?php endif; ?>
         </div>
 
         <table>
@@ -150,15 +175,26 @@ $judul_nota = ($jenis === 'servis' ? 'Nota Servis ' : 'Nota Restorasi ') . $nota
             <tfoot>
                 <tr>
                     <td colspan="3" class="kanan">Total</td>
-                    <td class="kanan"><?= rupiah($nota['biaya']); ?></td>
+                    <td class="kanan"><?= rupiah($total_nota); ?></td>
                 </tr>
+                <?php if ($jenis === 'penjualan'): ?>
+                    <tr class="rinci">
+                        <td colspan="3" class="kanan">Uang diterima</td>
+                        <td class="kanan"><?= rupiah($nota['bayar']); ?></td>
+                    </tr>
+                    <tr class="rinci">
+                        <td colspan="3" class="kanan">Kembalian</td>
+                        <td class="kanan"><?= rupiah($nota['kembalian']); ?></td>
+                    </tr>
+                <?php endif; ?>
             </tfoot>
         </table>
 
         <div class="bawah">
-            <span class="cap <?= $nota['status_bayar'] === 'Lunas' ? 'lunas' : 'belum'; ?>"><?= h($nota['status_bayar']); ?></span>
+            <?php $status_nota = $jenis === 'penjualan' ? 'Lunas' : $nota['status_bayar']; ?>
+            <span class="cap <?= $status_nota === 'Lunas' ? 'lunas' : 'belum'; ?>"><?= h($status_nota); ?></span>
             <div class="tanda">
-                <div><span></span>Pelanggan</div>
+                <div><span></span><?= $jenis === 'penjualan' ? 'Pembeli' : 'Pelanggan'; ?></div>
                 <div><span></span>Hormat kami</div>
             </div>
         </div>
@@ -173,7 +209,7 @@ $judul_nota = ($jenis === 'servis' ? 'Nota Servis ' : 'Nota Restorasi ') . $nota
             </div>
         <?php endif; ?>
 
-        <p class="terima">Terima kasih atas kepercayaan Anda. Simpan nota ini sebagai bukti servis.</p>
+        <p class="terima">Terima kasih atas kepercayaan Anda. Simpan nota ini sebagai bukti <?= $jenis === 'penjualan' ? 'pembelian' : 'servis'; ?>.</p>
     </main>
 
     <script>

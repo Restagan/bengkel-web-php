@@ -1,18 +1,4 @@
 <?php
-/*
- * Header bersama untuk semua halaman: <head>, navbar, dan strip livery.
- *
- * Isi variabel ini SEBELUM memanggil include 'partials/header.php':
- *   $judul_halaman  (wajib)     teks judul tab browser
- *   $menu_aktif     (opsional)  dashboard | pelanggan | kendaraan | servis | restorasi |
- *                               sparepart | mekanik | laporan
- *   $tanpa_navbar   (opsional)  true untuk halaman login
- *   $body_class     (opsional)  class tambahan untuk <body>
- *
- * Logo opsional: taruh file gambar di assets/img/logo.png
- * dan logo akan tampil otomatis di navbar dan halaman login.
- */
-
 $menu_aktif   = $menu_aktif   ?? '';
 $tanpa_navbar = $tanpa_navbar ?? false;
 $body_class   = $body_class   ?? '';
@@ -25,6 +11,7 @@ $menu = [
     'servis'    => ['servis.php',    'Servis'],
     'restorasi' => ['restorasi.php', 'Restorasi'],
     'sparepart' => ['sparepart.php', 'Sparepart'],
+    'kasir'     => ['kasir.php',     'Kasir'],
     'mekanik'   => ['mekanik.php',   'Mekanik'],
     'laporan'   => ['laporan.php',   'Laporan'],
 ];

@@ -6,7 +6,6 @@ if (!isset($_SESSION['admin_bengkel'])) {
     pindah('index.php');
 }
 
-// Riwayat lengkap satu kendaraan: semua servis dan restorasi, dari yang terbaru
 $id_mentah = potong($_GET['id'] ?? '', 50);
 $id        = mysqli_real_escape_string($conn, $id_mentah);
 

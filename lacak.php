@@ -1,30 +1,20 @@
 <?php
-/*
- * Halaman PUBLIK (tanpa login): pelanggan melacak progres servis dengan nopol atau kode resi.
- *
- * Privasi, karena halaman ini terbuka untuk siapa saja:
- *  - Pencarian lewat KODE RESI (rahasia, tertera di nota) menampilkan rincian: keluhan, mekanik, biaya, pembayaran.
- *  - Pencarian lewat NOPOL hanya menampilkan status pengerjaan. Nama pemilik, telepon, alamat, keluhan,
- *    biaya, dan kode resi tidak pernah ditampilkan. Nopol pun ditampilkan sebagian (D 12** GR).
- *  - Pencarian yang tidak ditemukan dibatasi per sesi untuk mempersulit tebak-tebakan kode.
- */
 session_start();
 require 'koneksi.php';
 
-const LACAK_BATAS_GAGAL = 8;    // pencarian tidak ditemukan yang diizinkan ...
-const LACAK_JEDA        = 300;  // ... dalam rentang detik ini
-const LACAK_SELANG      = 30;   // halaman memeriksa perubahan status tiap sekian detik
+const LACAK_BATAS_GAGAL = 8;
+const LACAK_JEDA        = 300;
+const LACAK_SELANG      = 30;
 
 header('Cache-Control: no-store');
 
 $input    = potong($_GET['q'] ?? '', 30);
-$mode     = '';      // 'resi' atau 'nopol'
-$pesan    = '';      // pesan jika pencarian gagal
+$mode     = '';
+$pesan    = '';
 $jenis    = 'warning';
 $hasil    = [];
 $sekarang = time();
 
-// Catatan pencarian gagal pada sesi ini (hanya yang masih dalam rentang waktu)
 $gagal = array_values(array_filter($_SESSION['lacak_gagal'] ?? [], function ($t) use ($sekarang) {
     return $t > $sekarang - LACAK_JEDA;
 }));
@@ -71,10 +61,8 @@ if ($input !== '') {
 }
 $_SESSION['lacak_gagal'] = $gagal;
 
-// Tanda perubahan: gabungan status semua hasil. Dipakai halaman untuk tahu kapan harus memuat ulang.
 $tanda = implode('|', array_map(function ($r) { return $r['status'] . '/' . $r['status_bayar']; }, $hasil));
 
-// Permintaan pembaruan otomatis (JSON), hanya berisi tanda perubahan
 if (isset($_GET['json'])) {
     header('Content-Type: application/json; charset=utf-8');
     echo json_encode(['tanda' => $tanda]);

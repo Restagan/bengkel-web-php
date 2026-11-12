@@ -6,8 +6,6 @@ if (!isset($_SESSION['admin_bengkel'])) {
     pindah('index.php');
 }
 
-// Memeriksa isian form tambah/ubah. Mengembalikan pesan kesalahan, atau '' jika semuanya benar.
-// $id_diabaikan dipakai saat ubah, agar nopol milik kendaraan itu sendiri tidak dianggap ganda.
 function periksaKendaraan($conn, $id_pelanggan, $merk, $nopol, $tahun, $id_diabaikan = '') {
     if ($id_pelanggan === '' || $merk === '' || $nopol === '' || $tahun === '') {
         return 'Pemilik, merk, nomor polisi, dan tahun wajib diisi.';
@@ -30,7 +28,6 @@ function periksaKendaraan($conn, $id_pelanggan, $merk, $nopol, $tahun, $id_diaba
     return '';
 }
 
-// ---------- Tambah (ID dibuat otomatis: K001, K002, ...) ----------
 if (isset($_POST['tambah'])) {
     $id_pelanggan = dariPost($conn, 'id_pelanggan', 50);
     $merk         = dariPost($conn, 'merk', 100);
@@ -48,7 +45,6 @@ if (isset($_POST['tambah'])) {
     pindah('kendaraan.php');
 }
 
-// ---------- Ubah ----------
 if (isset($_POST['ubah'])) {
     $id_mentah    = potong($_POST['id'] ?? '', 50);
     $id           = mysqli_real_escape_string($conn, $id_mentah);
@@ -67,7 +63,6 @@ if (isset($_POST['ubah'])) {
     pindah('kendaraan.php');
 }
 
-// ---------- Hapus (servis dan restorasinya ikut terhapus oleh database) ----------
 if (isset($_POST['hapus'])) {
     $id_mentah = potong($_POST['id_hapus'] ?? '', 50);
     $id        = mysqli_real_escape_string($conn, $id_mentah);
@@ -83,7 +78,6 @@ if (isset($_POST['hapus'])) {
     pindah('kendaraan.php');
 }
 
-// ---------- Daftar ----------
 $keyword = potong($_GET['cari'] ?? '', 100);
 $sort    = pilihan(strtoupper($_GET['sort'] ?? 'ASC'), ['ASC', 'DESC'], 'ASC');
 $kw      = mysqli_real_escape_string($conn, $keyword);
@@ -97,7 +91,6 @@ $result = mysqli_query($conn, "SELECT kendaraan.*, pelanggan.nama AS nama_pemili
        OR pelanggan.nama LIKE '%$kw%' OR kendaraan.id_pelanggan LIKE '%$kw%'
     ORDER BY LENGTH(kendaraan.id) $sort, kendaraan.id $sort");
 
-// Daftar pemilik untuk pilihan di form tambah dan edit
 $daftar_pelanggan = [];
 $hasil_pelanggan  = mysqli_query($conn, "SELECT id, nama FROM pelanggan ORDER BY nama ASC");
 while ($p = mysqli_fetch_assoc($hasil_pelanggan)) {
@@ -198,7 +191,6 @@ include 'partials/header.php';
     </div>
 </div>
 
-<!-- Modal tambah -->
 <div class="modal fade" id="modalTambah" tabindex="-1" aria-labelledby="judulModalTambah" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -244,7 +236,6 @@ include 'partials/header.php';
     </div>
 </div>
 
-<!-- Modal edit (diisi otomatis oleh assets/js/app.js dari atribut data-* tombol Edit) -->
 <div class="modal fade" id="modalEdit" tabindex="-1" aria-labelledby="judulModalEdit" aria-hidden="true" data-isi-form>
     <div class="modal-dialog">
         <div class="modal-content">

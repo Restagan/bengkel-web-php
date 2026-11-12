@@ -314,6 +314,12 @@ include 'partials/header.php';
             </a>
         </div>
         <div class="col-6 col-lg-3">
+            <a class="gr-link-card" href="kasir.php">
+                <strong>Kasir</strong>
+                <span>Jual sparepart langsung ke pembeli</span>
+            </a>
+        </div>
+        <div class="col-6 col-lg-3">
             <a class="gr-link-card" href="mekanik.php">
                 <strong>Mekanik</strong>
                 <span>Daftar mekanik dan beban kerja</span>

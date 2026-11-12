@@ -25,7 +25,6 @@ if (!$servis) {
     pindah('servis.php');
 }
 
-// ---------- Tambah suku cadang (stok langsung berkurang) ----------
 if (isset($_POST['tambah_item'])) {
     $id_sparepart = dariPost($conn, 'id_sparepart', 50);
     $jumlah       = bilangan($_POST['jumlah'] ?? '', 9999);
@@ -36,7 +35,6 @@ if (isset($_POST['tambah_item'])) {
     } elseif ($jumlah < 1) {
         flash('Jumlah minimal 1.', 'danger');
     } else {
-        // Pengurangan stok bersyarat: hanya berhasil jika stok masih cukup (aman bila dua orang menambah bersamaan)
         mysqli_query($conn, "UPDATE sparepart SET stok = stok - $jumlah WHERE id = '$id_sparepart' AND stok >= $jumlah");
         if (mysqli_affected_rows($conn) < 1) {
             $sisa = mysqli_fetch_assoc(mysqli_query($conn, "SELECT stok FROM sparepart WHERE id = '$id_sparepart'"));
@@ -52,7 +50,6 @@ if (isset($_POST['tambah_item'])) {
     pindah($alamat);
 }
 
-// ---------- Hapus suku cadang (stok dikembalikan) ----------
 if (isset($_POST['hapus_item'])) {
     $id_item = (int)($_POST['id_item'] ?? 0);
     $item    = mysqli_fetch_assoc(mysqli_query($conn, "SELECT id, id_sparepart, jumlah FROM servis_item
@@ -69,7 +66,6 @@ if (isset($_POST['hapus_item'])) {
     pindah($alamat);
 }
 
-// ---------- Data tampilan ----------
 $items = [];
 $hasil = mysqli_query($conn, "SELECT servis_item.*, sparepart.nama, sparepart.satuan
     FROM servis_item JOIN sparepart ON servis_item.id_sparepart = sparepart.id

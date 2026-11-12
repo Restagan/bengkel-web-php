@@ -6,7 +6,6 @@ if (!isset($_SESSION['admin_bengkel'])) {
     pindah('index.php');
 }
 
-// ---------- Tambah (ID dibuat otomatis: R001, R002, ...) ----------
 if (isset($_POST['tambah'])) {
     $id_kendaraan = dariPost($conn, 'id_kendaraan', 50);
     $id_mekanik   = dariPost($conn, 'id_mekanik', 50);
@@ -30,7 +29,6 @@ if (isset($_POST['tambah'])) {
     pindah('restorasi.php');
 }
 
-// ---------- Ubah ----------
 if (isset($_POST['ubah'])) {
     $id_mentah    = potong($_POST['id'] ?? '', 50);
     $id           = mysqli_real_escape_string($conn, $id_mentah);
@@ -54,7 +52,6 @@ if (isset($_POST['ubah'])) {
     pindah('restorasi.php');
 }
 
-// ---------- Ubah status pekerjaan dan pembayaran (jalan pintas) ----------
 if (isset($_POST['ubah_status'])) {
     $id_mentah = potong($_POST['id'] ?? '', 50);
     $id        = mysqli_real_escape_string($conn, $id_mentah);
@@ -67,7 +64,6 @@ if (isset($_POST['ubah_status'])) {
     pindah('restorasi.php');
 }
 
-// ---------- Hapus ----------
 if (isset($_POST['hapus'])) {
     $id_mentah = potong($_POST['id_hapus'] ?? '', 50);
     $id        = mysqli_real_escape_string($conn, $id_mentah);
@@ -81,7 +77,6 @@ if (isset($_POST['hapus'])) {
     pindah('restorasi.php');
 }
 
-// ---------- Daftar dan filter ----------
 $keyword  = potong($_GET['cari'] ?? '', 100);
 $f_status = pilihan($_GET['status'] ?? '', array_merge([''], STATUS_KERJA), '');
 $f_bayar  = pilihan($_GET['bayar'] ?? '', array_merge([''], STATUS_BAYAR), '');
@@ -110,7 +105,6 @@ $result = mysqli_query($conn, "SELECT restorasi.*, kendaraan.merk, kendaraan.nop
 $ringkas = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COALESCE(SUM(biaya), 0) AS total,
     COALESCE(SUM(CASE WHEN status_bayar <> 'Lunas' THEN biaya ELSE 0 END), 0) AS belum FROM restorasi"));
 
-// Pilihan untuk form
 $daftar_kendaraan = [];
 $hasil = mysqli_query($conn, "SELECT kendaraan.id, kendaraan.merk, kendaraan.nopol, pelanggan.nama AS pemilik
     FROM kendaraan JOIN pelanggan ON kendaraan.id_pelanggan = pelanggan.id ORDER BY kendaraan.nopol ASC");
@@ -257,7 +251,6 @@ include 'partials/header.php';
     </div>
 </div>
 
-<!-- Modal tambah -->
 <div class="modal fade" id="modalTambah" tabindex="-1" aria-labelledby="judulModalTambah" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -333,7 +326,6 @@ include 'partials/header.php';
     </div>
 </div>
 
-<!-- Modal edit (diisi otomatis oleh assets/js/app.js dari atribut data-* tombol Edit) -->
 <div class="modal fade" id="modalEdit" tabindex="-1" aria-labelledby="judulModalEdit" aria-hidden="true" data-isi-form>
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -407,7 +399,6 @@ include 'partials/header.php';
     </div>
 </div>
 
-<!-- Modal ubah status cepat -->
 <div class="modal fade" id="modalStatus" tabindex="-1" aria-labelledby="judulModalStatus" aria-hidden="true" data-isi-form>
     <div class="modal-dialog modal-sm">
         <div class="modal-content">

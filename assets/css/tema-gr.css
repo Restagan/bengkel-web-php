@@ -1,34 +1,22 @@
-/* =====================================================================
-   TEMA BALAP: hitam, merah, putih
-   Dipakai di atas Bootstrap 5.3 (mode gelap, data-bs-theme="dark").
-
-   Satu ide utama: garis livery miring. Kemiringan --gr-slant dipakai di
-   strip navbar, penanda judul, tombol, label status, dan bar pendapatan.
-   Panel dan tabel sengaja dibuat polos supaya garis miring itu menonjol.
-
-   Ingin ganti warna? Cukup ubah variabel di bagian ":root" di bawah.
-   ===================================================================== */
-
 :root,
 [data-bs-theme="dark"] {
-  --gr-asphalt:   #0a0a0c;   /* latar halaman */
-  --gr-panel:     #141418;   /* panel, kartu, modal */
-  --gr-panel-hi:  #1c1c22;   /* panel yang disorot */
-  --gr-line:      #2a2a31;   /* garis pemisah */
-  --gr-red:       #eb0a1e;   /* merah utama */
-  --gr-red-hot:   #ff4455;   /* merah terang untuk teks kecil dan hover */
-  --gr-red-deep:  #a30614;   /* merah tua */
+  --gr-asphalt:   #0a0a0c;
+  --gr-panel:     #141418;
+  --gr-panel-hi:  #1c1c22;
+  --gr-line:      #2a2a31;
+  --gr-red:       #eb0a1e;
+  --gr-red-hot:   #ff4455;
+  --gr-red-deep:  #a30614;
   --gr-white:     #f4f4f5;
-  --gr-grey:      #9b9ba5;   /* teks sekunder */
-  --gr-amber:     #ffb200;   /* status Dikerjakan */
-  --gr-green:     #2fd07f;   /* status Selesai */
+  --gr-grey:      #9b9ba5;
+  --gr-amber:     #ffb200;
+  --gr-green:     #2fd07f;
 
-  --gr-slant: -22deg;        /* kemiringan livery */
+  --gr-slant: -22deg;
 
   --gr-font-display: "Chakra Petch", "Arial Narrow", "Segoe UI", sans-serif;
   --gr-font-body:    "Barlow", "Segoe UI", system-ui, -apple-system, sans-serif;
 
-  /* Menimpa variabel bawaan Bootstrap */
   --bs-body-bg: var(--gr-asphalt);
   --bs-body-color: var(--gr-white);
   --bs-body-font-family: var(--gr-font-body);
@@ -40,8 +28,6 @@
 }
 
 ::selection { background: var(--gr-red); color: #fff; }
-
-/* ---------- Dasar halaman ---------- */
 
 body.gr-body {
   display: flex;
@@ -56,8 +42,6 @@ body.gr-body {
 
 :focus-visible { outline: 2px solid var(--gr-white); outline-offset: 2px; }
 
-/* ---------- Penanda miring (dipakai berulang) ---------- */
-
 .gr-mark,
 .gr-title::before {
   content: "";
@@ -69,8 +53,6 @@ body.gr-body {
     var(--gr-red) 0 58%, transparent 58% 74%, var(--gr-white) 74% 100%);
   transform: skewX(var(--gr-slant));
 }
-
-/* ---------- Navbar dan strip ---------- */
 
 .gr-navbar {
   background: #050506;
@@ -133,8 +115,6 @@ body.gr-body {
   color: var(--gr-grey);
 }
 
-/* ---------- Judul halaman ---------- */
-
 .gr-title {
   display: flex;
   align-items: center;
@@ -155,8 +135,6 @@ body.gr-body {
   font-weight: 700;
   font-size: 1.2rem;
 }
-
-/* ---------- Panel ---------- */
 
 .gr-panel {
   background: var(--gr-panel);
@@ -184,8 +162,6 @@ body.gr-body {
   font-size: 1.3rem;
   font-variant-numeric: tabular-nums;
 }
-
-/* ---------- Tabel ---------- */
 
 .table-gr {
   --bs-table-bg: transparent;
@@ -239,8 +215,6 @@ body.gr-body {
 }
 .table-gr tbody td.gr-empty strong { color: var(--gr-white); }
 
-/* ---------- Label status ---------- */
-
 .st {
   display: inline-flex;
   align-items: center;
@@ -264,8 +238,6 @@ body.gr-body {
 .st-dikerjakan::before { animation: gr-kedip 1.6s ease-in-out infinite; }
 @keyframes gr-kedip { 50% { opacity: .25; } }
 
-/* ---------- Tombol (jajaran genjang) ---------- */
-
 .btn {
   --bs-btn-font-family: var(--gr-font-display);
   --bs-btn-font-weight: 600;
@@ -274,7 +246,7 @@ body.gr-body {
   --bs-btn-padding-x: 1.5rem;
   --bs-btn-padding-y: .55rem;
   --gr-cut: 10px;
-  background-image: none;   /* buang gradien bawaan jika ada tema Bootstrap lain */
+  background-image: none;
   color: var(--bs-btn-color);
   letter-spacing: .02em;
   clip-path: polygon(var(--gr-cut) 0, 100% 0,
@@ -287,7 +259,6 @@ body.gr-body {
   --bs-btn-font-size: .9rem;
   --gr-cut: 7px;
 }
-/* Garis fokus di luar bentuk akan terpotong, jadi pakai bayangan di dalam */
 .btn:focus-visible {
   outline: none;
   box-shadow: inset 0 0 0 2px #fff;
@@ -300,6 +271,9 @@ body.gr-body {
   --bs-btn-hover-bg: var(--gr-red-hot);
   --bs-btn-active-color: #fff;
   --bs-btn-active-bg: var(--gr-red-deep);
+  --bs-btn-disabled-color: #fff;
+  --bs-btn-disabled-bg: var(--gr-red);
+  --bs-btn-disabled-border-color: var(--gr-red);
 }
 .btn-secondary {
   --bs-btn-color: #e5e5ea;
@@ -309,7 +283,7 @@ body.gr-body {
   --bs-btn-active-color: #fff;
   --bs-btn-active-bg: #44444e;
 }
-.btn-info {            /* dipakai untuk "Ubah status" */
+.btn-info {
   --bs-btn-color: #fff;
   --bs-btn-bg: #24242b;
   --bs-btn-hover-color: #0a0a0c;
@@ -317,7 +291,7 @@ body.gr-body {
   --bs-btn-active-color: #0a0a0c;
   --bs-btn-active-bg: #d9d9de;
 }
-.btn-danger {          /* dipakai untuk "Hapus" dan "Keluar" */
+.btn-danger {
   --bs-btn-color: #ff7a85;
   --bs-btn-bg: #2b0b10;
   --bs-btn-hover-color: #fff;
@@ -325,8 +299,6 @@ body.gr-body {
   --bs-btn-active-color: #fff;
   --bs-btn-active-bg: var(--gr-red-deep);
 }
-
-/* ---------- Form ---------- */
 
 .form-label {
   margin-bottom: .35rem;
@@ -359,8 +331,6 @@ body.gr-body {
   border-left: 4px solid var(--gr-red);
 }
 
-/* ---------- Modal ---------- */
-
 .modal-content {
   background: var(--gr-panel);
   border: 1px solid var(--gr-line);
@@ -376,8 +346,6 @@ body.gr-body {
   font-size: 1.25rem;
 }
 .modal-backdrop { --bs-backdrop-opacity: .75; }
-
-/* ---------- Dashboard ---------- */
 
 .gr-tile {
   height: 100%;
@@ -404,7 +372,6 @@ body.gr-body {
   font-size: 1.05rem;
   color: var(--gr-grey);
 }
-/* Kartu pendapatan: satu-satunya blok merah penuh, dengan sisi kanan miring */
 .gr-tile-hot {
   padding-right: 3rem;
   background: var(--gr-red);
@@ -479,10 +446,6 @@ body.gr-body {
 }
 .gr-link-card span { font-size: .9rem; color: var(--gr-grey); }
 
-/* ---------- Halaman login ---------- */
-
-/* Garis livery yang melintang di belakang halaman: satu-satunya
-   elemen besar yang berani di seluruh situs. */
 body.gr-login::before {
   content: "";
   position: fixed;
@@ -500,7 +463,6 @@ body.gr-login::before {
       transparent 67%);
 }
 @media (max-width: 991.98px) {
-  /* Di layar kecil garis melewati teks, jadi diredupkan agar teks tetap terbaca */
   body.gr-login::before { opacity: .38; }
 }
 .gr-login .gr-main {
@@ -528,20 +490,12 @@ body.gr-login::before {
   box-shadow: 0 30px 70px -20px rgba(0, 0, 0, .85);
 }
 
-/* ---------- Hormati pengaturan "kurangi gerakan" ---------- */
-
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation: none !important;
     transition: none !important;
   }
 }
-
-/* =====================================================================
-   KOMPONEN TAMBAHAN: pembayaran, stok, nota, riwayat, laporan, dashboard
-   ===================================================================== */
-
-/* ---------- Teks pendukung ---------- */
 
 .kol-sub {
   font-family: var(--gr-font-body);
@@ -563,8 +517,6 @@ body.gr-login::before {
 .gr-panel-pad { padding: 1.25rem 1.4rem; }
 .form-text { color: var(--gr-grey); }
 
-/* ---------- Pesan sukses / peringatan ---------- */
-
 .alert-success {
   --bs-alert-bg: rgba(47, 208, 127, .1);
   --bs-alert-color: #a8ecc9;
@@ -580,8 +532,6 @@ body.gr-login::before {
   border-left: 4px solid var(--gr-amber);
 }
 .alert a { color: inherit; font-weight: 600; }
-
-/* ---------- Isian khusus ---------- */
 
 .input-group-text {
   background: var(--gr-panel-hi);
@@ -601,15 +551,11 @@ body.gr-login::before {
 .form-control[readonly]:focus { border-color: var(--gr-line); box-shadow: none; }
 .form-select option { background: #0c0c0f; color: #fff; }
 
-/* ---------- Label pembayaran dan stok ---------- */
-
 .st-lunas   { background: rgba(47, 208, 127, .16);  color: var(--gr-green); }
 .st-belum   { background: rgba(235, 10, 30, .16);   color: #ff7a85; }
 .st-aman    { background: rgba(47, 208, 127, .16);  color: var(--gr-green); }
 .st-menipis { background: rgba(255, 178, 0, .16);   color: var(--gr-amber); }
 .st-habis   { background: rgba(235, 10, 30, .16);   color: #ff7a85; }
-
-/* ---------- Tabel: baris total ---------- */
 
 .table-gr tfoot td {
   padding: .8rem 1rem;
@@ -625,8 +571,6 @@ body.gr-login::before {
   font-size: 1.1rem;
 }
 
-/* ---------- Rincian label : nilai (halaman detail) ---------- */
-
 .gr-dl {
   display: grid;
   grid-template-columns: max-content 1fr;
@@ -636,8 +580,6 @@ body.gr-login::before {
 .gr-dl dt { font-weight: 600; font-size: .92rem; color: var(--gr-grey); }
 .gr-dl dd { margin: 0; overflow-wrap: anywhere; }
 .gr-dl dd .st { margin: 0 .35rem .25rem 0; }
-
-/* ---------- Kotak ringkasan kecil (laporan, riwayat, dashboard) ---------- */
 
 .gr-tiles {
   display: grid;
@@ -668,8 +610,6 @@ body.gr-login::before {
 .gr-tiles .gr-tile-kuning { border-left-color: var(--gr-amber); }
 .gr-tiles a.gr-tile:hover, .gr-tiles a.gr-tile:focus-visible { background: var(--gr-panel-hi); }
 
-/* ---------- Laporan ---------- */
-
 .gr-pintas { display: flex; flex-wrap: wrap; gap: .4rem 1.1rem; margin-top: .8rem; }
 .gr-pintas a { font-size: .88rem; font-weight: 600; text-decoration: none; }
 .gr-pintas a:hover { text-decoration: underline; }
@@ -689,8 +629,6 @@ body.gr-login::before {
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
-
-/* ---------- Grafik batang pendapatan 6 bulan (dashboard) ---------- */
 
 .gr-grafik {
   display: grid;
@@ -725,18 +663,10 @@ body.gr-login::before {
   color: var(--gr-grey);
 }
 
-/* ---------- Cetak halaman biasa: hapus navigasi, latar putih ---------- */
-
 @media print {
   body.gr-body { background: #fff; color: #000; }
   .gr-navbar, .gr-toolbar, footer, .btn { display: none !important; }
 }
-
-/* =====================================================================
-   HALAMAN PUBLIK LACAK SERVIS (lacak.php)
-   Progres 3 tahap: Menunggu, Dikerjakan, Selesai.
-   Mendatar di layar lebar, menurun (vertikal) di layar ponsel.
-   ===================================================================== */
 
 .lacak-bar { padding: .55rem 0; }
 .lacak-admin {
@@ -769,8 +699,6 @@ body.gr-login::before {
 .lacak-cara li { margin-bottom: .35rem; }
 .lacak-cara strong { color: var(--gr-white); }
 
-/* ---------- Kartu hasil ---------- */
-
 .lacak-kartu { margin-bottom: 1.25rem; }
 .lacak-merk {
   margin: 0;
@@ -790,8 +718,6 @@ body.gr-login::before {
   user-select: all;
 }
 
-/* ---------- Bar progres (Bootstrap .progress, dibuat sesuai tema) ---------- */
-
 .lacak-kartu .progress {
   --bs-progress-height: 10px;
   --bs-progress-bg: var(--gr-panel-hi);
@@ -802,8 +728,6 @@ body.gr-login::before {
 }
 .lacak-kartu.s-menunggu .progress { --bs-progress-bar-bg: #c9c9d1; }
 .lacak-kartu.s-selesai  .progress { --bs-progress-bar-bg: var(--gr-green); }
-
-/* ---------- Langkah (stepper): mendatar ---------- */
 
 .gr-langkah {
   list-style: none;
@@ -834,7 +758,6 @@ body.gr-login::before {
   background: var(--gr-panel-hi);
   clip-path: polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
 }
-/* Garis penghubung ke langkah berikutnya */
 .gr-langkah li:not(:last-child)::after {
   content: "";
   position: absolute;
@@ -849,12 +772,10 @@ body.gr-login::before {
 .gr-langkah .teks small { display: block; font-size: .84rem; color: var(--gr-grey); }
 .gr-langkah li.belum .teks strong { color: var(--gr-grey); }
 
-/* Status tiap langkah */
 .gr-langkah li.selesai .titik { background: var(--gr-green); color: #04170d; }
 .gr-langkah li.selesai:not(:last-child)::after { background: var(--gr-green); }
 .gr-langkah li.aktif .titik { background: var(--gr-amber); color: #1a1200; }
 .gr-langkah li.aktif:first-child .titik { background: #c9c9d1; color: #111; }
-/* Langkah aktif berdenyut pelan (lapisan putih tipis, karena bayangan terpotong bentuk jajaran genjang) */
 .gr-langkah li.aktif .titik::before {
   content: "";
   position: absolute;
@@ -864,8 +785,6 @@ body.gr-login::before {
   animation: gr-denyut 1.8s ease-in-out infinite;
 }
 @keyframes gr-denyut { 50% { opacity: .35; } }
-
-/* ---------- Langkah: menurun di layar ponsel ---------- */
 
 @media (max-width: 575.98px) {
   .gr-langkah { grid-template-columns: 1fr; }
@@ -886,8 +805,6 @@ body.gr-login::before {
   }
   .gr-langkah .teks { margin-top: .1rem; }
 }
-
-/* ---------- Pesan status, indikator live, catatan ---------- */
 
 .lacak-pesan {
   padding: .8rem 1rem;
@@ -914,11 +831,10 @@ body.gr-login::before {
 }
 .lacak-privasi { margin: 2rem 0 0; font-size: .85rem; color: var(--gr-grey); }
 
-/* Tautan ke halaman Lacak di bawah kartu login, dan kode resi di halaman Detail servis */
 .gr-lacak-publik { margin: 1rem 0 0; text-align: center; color: var(--gr-grey); }
 .gr-lacak-publik a { font-weight: 600; }
 .lacak-kode-kecil { display: inline-block; font-size: .95rem; }
-.table-gr .kol-id .kol-sub { white-space: nowrap; }   /* kode resi tidak boleh terpotong di dua baris */
+.table-gr .kol-id .kol-sub { white-space: nowrap; }
 
 .gr-alert-stok { padding: 1rem 1.25rem; margin-bottom: 1.5rem; }
 .gr-alert-stok-judul { display: flex; flex-wrap: wrap; align-items: baseline; gap: .2rem .9rem; margin-bottom: .9rem; }
@@ -953,3 +869,59 @@ body.gr-login::before {
 .gr-alert-stok-daftar li.habis .sisa { color: #ff6b79; }
 .gr-alert-stok-aksi { display: flex; flex-wrap: wrap; align-items: center; gap: .75rem; }
 .gr-alert-stok .btn-secondary { color: #fff; }
+
+.kasir-daftar { display: flex; flex-direction: column; gap: .75rem; }
+.kasir-baris {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 96px 140px 42px;
+  gap: .6rem;
+  align-items: start;
+  padding: .75rem;
+  background: var(--gr-panel-hi);
+  border-left: 3px solid var(--gr-line);
+}
+.kasir-info { margin-top: .35rem; font-size: .84rem; color: var(--gr-grey); }
+.kasir-info-salah { color: #ff8a95; }
+.kasir-sub {
+  padding-top: .45rem;
+  text-align: right;
+  font-family: var(--gr-font-display);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.kasir-hapus { padding-inline: .6rem; }
+.kasir-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: .75rem;
+  margin: 1.1rem 0;
+  padding: .9rem 1rem;
+  background: var(--gr-panel-hi);
+  border-left: 4px solid var(--gr-red);
+}
+.kasir-total span { color: var(--gr-grey); }
+.kasir-total strong {
+  font-family: var(--gr-font-display);
+  font-size: 1.9rem;
+  font-style: italic;
+  font-variant-numeric: tabular-nums;
+}
+.kasir-kembali { min-height: 1.7rem; margin-top: .5rem; font-weight: 600; }
+.kasir-kembali-ok { color: var(--gr-green); }
+.kasir-kembali-kurang { color: #ff6b79; }
+.kasir-catatan { margin: .75rem 0 0; font-size: .84rem; color: var(--gr-grey); }
+.kasir-sukses { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .75rem; }
+.kasir-sukses .btn { color: #fff; }
+@media (min-width: 992px) {
+  .kasir-ringkasan { position: sticky; top: 1rem; }
+}
+@media (max-width: 575.98px) {
+  .kasir-baris { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 42px; }
+  .kasir-pilih-wrap { grid-column: 1 / -1; }
+  .kasir-sub { text-align: left; }
+}
+
+@media (min-width: 1200px) and (max-width: 1399.98px) {
+  .gr-navbar .navbar-nav .nav-link { padding-inline: .6rem; font-size: .93rem; }
+}

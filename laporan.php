@@ -6,7 +6,6 @@ if (!isset($_SESSION['admin_bengkel'])) {
     pindah('index.php');
 }
 
-// ---------- Rentang tanggal (berdasarkan tanggal masuk) ----------
 $awal_bulan = date('Y-m-01');
 $dari       = tanggalValid($_GET['dari'] ?? '') ? $_GET['dari'] : $awal_bulan;
 $sampai     = tanggalValid($_GET['sampai'] ?? '') ? $_GET['sampai'] : hariIni();
@@ -37,9 +36,7 @@ $result = mysqli_query($conn, "SELECT kerja.*, kendaraan.merk, kendaraan.nopol,
 $baris = [];
 while ($r = mysqli_fetch_assoc($result)) { $baris[] = $r; }
 
-// ---------- Ekspor CSV (bisa dibuka di Excel) ----------
 if (isset($_GET['ekspor'])) {
-    // Sel yang diawali = + - @ bisa dibaca Excel sebagai rumus, jadi diberi tanda petik di depannya
     $aman = function ($teks) {
         $teks = (string)$teks;
         return ($teks !== '' && strpos("=+-@\t\r", $teks[0]) !== false) ? "'" . $teks : $teks;
@@ -47,8 +44,8 @@ if (isset($_GET['ekspor'])) {
 
     header('Content-Type: text/csv; charset=UTF-8');
     header('Content-Disposition: attachment; filename="laporan-bengkel_' . $dari . '_sd_' . $sampai . '.csv"');
-    echo "\xEF\xBB\xBF";          // BOM agar Excel membaca UTF-8
-    echo "sep=;\n";               // Excel memakai titik koma sebagai pemisah, apa pun pengaturan bahasanya
+    echo "\xEF\xBB\xBF";
+    echo "sep=;\n";
     $out = fopen('php://output', 'w');
     fputcsv($out, ['Tanggal masuk', 'Tanggal selesai', 'Jenis', 'ID', 'Nopol', 'Kendaraan', 'Pelanggan', 'Mekanik', 'Pekerjaan', 'Status', 'Pembayaran', 'Biaya (Rp)'], ';');
     foreach ($baris as $r) {
@@ -62,7 +59,6 @@ if (isset($_GET['ekspor'])) {
     exit;
 }
 
-// ---------- Ringkasan ----------
 $total = $lunas = $belum = 0;
 $jml   = ['Servis' => 0, 'Restorasi' => 0];
 $per_mekanik = [];
@@ -78,7 +74,6 @@ foreach ($baris as $r) {
 }
 uasort($per_mekanik, function ($a, $b) { return $b['biaya'] <=> $a['biaya']; });
 
-// Jalan pintas rentang tanggal
 $jalan_pintas = [
     'Bulan ini'  => [$awal_bulan, hariIni()],
     'Bulan lalu' => [date('Y-m-01', strtotime('first day of last month')), date('Y-m-t', strtotime('first day of last month'))],
